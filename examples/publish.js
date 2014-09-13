@@ -1,4 +1,4 @@
-var gazebojs = require('../../gazebo4js');
+var gazebojs = require('../../gazebojs');
 var gazebo = new gazebojs.Gazebo();
 
 

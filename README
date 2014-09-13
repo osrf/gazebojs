@@ -1,4 +1,4 @@
-gazebo4js
+gazebojs
 =========
 
 NodeJs bindings for the Gazebo simulator (http://www.gazebosim.org/)

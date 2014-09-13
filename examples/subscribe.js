@@ -1,4 +1,4 @@
-var gazebojs = require('../../gazebo4js');
+var gazebojs = require('../../gazebojs');
 
 if (process.argv.length != 5)
 {

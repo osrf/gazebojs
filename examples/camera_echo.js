@@ -1,5 +1,5 @@
 var util = require('util');
-var gazebojs = require('../../gazebo4js');
+var gazebojs = require('../../gazebojs');
 var gazebo = new gazebojs.Gazebo();
 
 if (process.argv.length != 5)
