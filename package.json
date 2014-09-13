@@ -1,0 +1,26 @@
+{
+  "name": "gazebo4js",
+  "version": "0.0.22",
+  "description": "NodeJs bindings for the Gazebo simulator (gazebosim.org)",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/osrf/gazebo4js"
+  },
+  "keywords": [
+    "robotics",
+    "simulation",
+    "rigid",
+    "body",
+    "dynamics"
+  ],
+  "author": "Hugo Boyer",
+  "license": "Apache",
+  "dependencies": {
+    "jpeg": "^2.0.0",
+    "node-gyp": "~1.0.1"
+  }
+}
