@@ -12,7 +12,7 @@ add the osrf repository and install libgazebo4-dev (http://gazebosim.org/tutoria
 
 Installation
 
-npm install gazebo4js
+npm install gazebojs
 
 
 

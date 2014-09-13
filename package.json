@@ -1,14 +1,14 @@
 {
-  "name": "gazebo4js",
-  "version": "0.0.22",
+  "name": "gazebojs",
+  "version": "4.0.0",
   "description": "NodeJs bindings for the Gazebo simulator (gazebosim.org)",
   "main": "index.js",
   "scripts": {
     "test": "npm test"
   },
   "repository": {
-    "type": "git",
-    "url": "https://bitbucket.org/osrf/gazebo4js"
+    "type": "mercurial",
+    "url": "https://bitbucket.org/osrf/gazebojs"
   },
   "keywords": [
     "robotics",
