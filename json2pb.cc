@@ -229,7 +229,6 @@ static void _json2pb(Message& msg, json_t *root)
 
 		if (!field) throw j2pb_error("Unknown field: " + std::string(name));
 
-		int r = 0;
 		if (field->is_repeated()) {
 			if (!json_is_array(jf))
 				throw j2pb_error(field, "Not array");
