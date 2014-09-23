@@ -1,5 +1,5 @@
 var gz = require('./build/Release/gazebo');
-
+var fs = require('fs');
 
 function Gazebo (options) {
     this.sim = new gz.Sim();
@@ -45,6 +45,19 @@ Gazebo.prototype.unsubscribe = function(topic) {
 Gazebo.prototype.publish = function (type, topic, msg, options) {
     var str = JSON.stringify(msg);
     this.sim.publish(type, topic, str);
+}
+
+Gazebo.prototype.model = function(model_name, cb) {
+    var modelFile = this.sim.modelFile(model_name);
+    fs.readFile(modelFile, function(err, data){
+        var str = '';
+        if(data){
+            // fs returns a Buffer, get a string instead
+            str = data.toString('utf8');
+        }
+        // serve it
+        cb(err, str);
+    });
 }
 
 
