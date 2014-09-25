@@ -1,6 +1,7 @@
-var gz = require('./build/Debug/gazebo');
+
+var gz = require('./build/Release/gazebo');
 var fs = require('fs');
-var Jpeg = require('jpeg').Jpeg; // https://github.com/pkrumins/node-jpeg
+var Jpeg = require('jpeg').Jpeg; 
 var Png = require('png').Png;
 
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
