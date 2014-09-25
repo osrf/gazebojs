@@ -1,11 +1,11 @@
 var util = require('util');
-var gazebojs = require('../../gazebojs');
+var gazebojs = require('gazebojs');
 var gazebo = new gazebojs.Gazebo();
 
 if (process.argv.length != 5)
 {
-  console.log('node camera echo.js [source camera name] [dest camera name] [frame_skip]');
-  console.log('ex:\n   node camera chimera 30');
+  console.log('node camera_echo.js [source camera name] [dest camera name] [frame_skip]');
+  console.log('ex:\n   node camera_echo.js camera chimera 30');
   process.exit(-1);
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "gazebojs",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "NodeJs bindings for the Gazebo simulator (gazebosim.org)",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
   "license": "Apache",
   "dependencies": {
     "jpeg": "^2.0.0",
-    "node-gyp": "~1.0.1"
+    "node-gyp": "~1.0.1",
+    "png": "^3.0.3"
   }
 }
