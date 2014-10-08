@@ -4,6 +4,79 @@ var fs = require('fs');
 var Jpeg = require('jpeg').Jpeg; 
 var Png = require('png').Png;
 
+
+// the options determine how a message is filtered
+//  - timeElapsed: a message cannot be ignored if is older than this value
+//  - distance: a message cannot be ignored if translation is larger than this value
+//  - quaternion: a message cannot be ignored if the dot product of the quaternion
+//    is larger than this value.
+function PosesFilter (options) {
+    this.poseMap = {};
+
+    this.timeElapsed = 0;
+    this.distance = 0;
+    this.quaternion = 0;
+
+    if(options.timeElapsed) {
+        this.timeElapsed = options.timeElapsed;
+        this.nsec = 1e9 * this.timeElapsed;
+
+    }
+    if(options.distance) {
+        this.distance = options.distance;
+        this.d2 = this.distance * this.distance;
+    }
+    if(options.quaternion) {
+        this.quaternion = options.quaternion;
+    }
+
+}
+
+exports.PosesFilter = PosesFilter;
+
+PosesFilter.prototype.hasMoved = function(oldPosition, position, dist)
+{
+    return True;
+}
+
+PosesFilter.prototype.hasTurned = function(oldOrientation, orientation, quat)
+{
+    return True;
+}
+
+PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
+{
+    return True;
+}
+
+PosesFilter.prototype.addPosesStamped = function(posesStamped) {
+    var unfilteredMsgs = [];
+    var newTime = posesStamped.time;
+    posesStamped.pose.forEach(function (pose) {
+        var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
+        var lastMsg = this.PoseMap[pose.id];
+        var filtered = true;
+        if(!lastMsg) {
+            filtered = false;
+        }
+        else {
+            var old = this.isOld(lastMsg.time, newMsg.time, this.nsec);
+            var far = this.hasMoved(lastMsg.position, newMsg.position, this.d2);
+            var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion);
+            if(old || far || twisted) {
+                filtered = false;    
+            }
+        }
+        if (!filtered) {
+            this.PoseMap[pose.id] = newMsg;
+            unfilteredMsgs.push(m);
+        }
+    });
+    return unfilteredMsgs;
+}
+
+
+
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
    'RGBA_INT8', 'BGRA_INT8', 'RGB_INT16', 'RGB_INT32', 'BGR_INT8', 'BGR_INT16',
    'BGR_INT32', 'R_FLOAT16', 'RGB_FLOAT16', 'R_FLOAT32', 'RGB_FLOAT32',
@@ -12,6 +85,8 @@ var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
 function Gazebo (options) {
     this.sim = new gz.Sim();
 }
+
+exports.Gazebo = Gazebo;
 
 Gazebo.prototype.pause = function() {
     this.sim.pause();
@@ -36,13 +111,19 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         }
 
         var result = data;
-	// parse the string into a json msg
+	    // parse the string into a json msg
         if(toJson) {
             result = JSON.parse(data);
         }
         cb(err, result);
 
     }, latch);
+}
+
+
+
+Gazebo.prototype.subscribeToFilteredPose = function(topic, cb, options) {
+    var m;
 }
 
 Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
@@ -128,7 +209,6 @@ Gazebo.prototype.model = function(model_name, cb) {
 }
 
 
-exports.Gazebo = Gazebo;
 
 exports.connect = function (options ) {
     return new Gazebo(options);
