@@ -3,17 +3,6 @@ var gazebojs = require('gazebojs');
 var fs = require('fs');
 
 
-function getImageInfo(image_stamped)
-{
-    var image = image_stamped.image;
-    var s = ''
-    s += 'timestamp: ' + image_stamped.time;
-    s += ' pixel format: ' + gz_formats[image.pixel_format] + ' [' + image.width + ' x ' + image.height + ']';
-    s += ' (bytes per row: ' + image.step + ')';
-    return s;
-}
- 
-
 // adds 0 in front a string for padding
 function pad(num, size) {
     var s = num+"";
@@ -66,7 +55,7 @@ gazebo.subscribeToImageTopic(src_topic, function (err, img){
 
 console.log('setup a loop with 5 sec interval tick');
 setInterval(function (){
-  console.log('tick');
+  console.log('tick ' + gazebo);
 },5000);
 
 
