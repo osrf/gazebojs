@@ -7,12 +7,13 @@ var p0 = {"time":{"sec":2439,"nsec":572000000},"pose":[{"name":"unit_box_1","pos
 var p1 = {"time":{"sec":2439,"nsec":759000000},"pose":[{"name":"camera","position":{"x":-0.9394562528584841,"y":-2.025399611171051,"z":1.0000478811643658},"id":15,"orientation":{"x":0.000016516299932868475,"y":0.0002851805780335155,"z":-0.06043389244630635,"w":0.9981721610238576}},{"name":"camera::link","position":{"x":0.05,"y":0.05,"z":0.05},"id":16,"orientation":{"x":0,"y":0,"z":0,"w":1}},{"name":"double_pendulum_with_base","position":{"x":2.4009444962361783,"y":-2.5931251186246316,"z":-2.387290788260335e-7},"id":28,"orientation":{"x":-1.4999037463561534e-7,"y":7.684872359471244e-7,"z":-0.001176083703062174,"w":0.9999993084130161}},{"name":"double_pendulum_with_base::base","position":{"x":0,"y":0,"z":0},"id":29,"orientation":{"x":0,"y":0,"z":0,"w":1}},{"name":"double_pendulum_with_base::upper_link","position":{"x":1.9542798090147202e-8,"y":0.000004135143816605919,"z":2.099996319395077},"id":38,"orientation":{"x":-0.9082237540221416,"y":-5.832778664574547e-9,"z":8.36155166590233e-9,"w":0.418484901316557}},{"name":"double_pendulum_with_base::lower_link","position":{"x":0.24999999968733733,"y":0.7601693210347232,"z":1.450255741078733},"id":51,"orientation":{"x":-0.5659066212119802,"y":-3.7611249607393687e-10,"z":9.343693177033334e-9,"w":0.8244693421034165}}]}
 
 
-suite('norm', function() {
+suite('filter', function() {
 
     test('first messages are not filtered', function() {
         var options = {};
         var filter = new gazebojs.PosesFilter(options);
-        assert.equal(5, 2*2);
+        var unfiltered = filter.addPosesStamped(p0);
+        assert.equal(unfiltered.length, p0.pose.length);
     });
 
 });

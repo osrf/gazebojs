@@ -16,18 +16,19 @@ function PosesFilter (options) {
     this.timeElapsed = 0;
     this.distance = 0;
     this.quaternion = 0;
+    if(options) {
+        if(options.timeElapsed) {
+            this.timeElapsed = options.timeElapsed;
+            this.nsec = 1e9 * this.timeElapsed;
 
-    if(options.timeElapsed) {
-        this.timeElapsed = options.timeElapsed;
-        this.nsec = 1e9 * this.timeElapsed;
-
-    }
-    if(options.distance) {
-        this.distance = options.distance;
-        this.d2 = this.distance * this.distance;
-    }
-    if(options.quaternion) {
-        this.quaternion = options.quaternion;
+        }
+        if(options.distance) {
+            this.distance = options.distance;
+            this.d2 = this.distance * this.distance;
+        }
+        if(options.quaternion) {
+            this.quaternion = options.quaternion;
+        }
     }
 
 }
@@ -51,10 +52,17 @@ PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
     var unfilteredMsgs = [];
+    console.log('aaxx this ' + require('util').inspect(this));
     var newTime = posesStamped.time;
-    posesStamped.pose.forEach(function (pose) {
+
+    //posesStamped.pose.forEach(function (pose) {
+    for(var i=0; i < posesStamped.pose.length; i++) {
+        var pose = posesStamped.pose[i];
         var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
-        var lastMsg = this.PoseMap[pose.id];
+        var model = pose.id;
+    
+        console.log('xx that ' + require('util').inspect(this));
+        var lastMsg = this.poseMap[model];
         var filtered = true;
         if(!lastMsg) {
             filtered = false;
@@ -68,10 +76,10 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
             }
         }
         if (!filtered) {
-            this.PoseMap[pose.id] = newMsg;
-            unfilteredMsgs.push(m);
+            this.poseMap[pose.id] = newMsg;
+            unfilteredMsgs.push(newMsg);
         }
-    });
+    } //);
     return unfilteredMsgs;
 }
 
