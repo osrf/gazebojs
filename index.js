@@ -52,16 +52,13 @@ PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
     var unfilteredMsgs = [];
-    console.log('aaxx this ' + require('util').inspect(this));
     var newTime = posesStamped.time;
 
-    //posesStamped.pose.forEach(function (pose) {
     for(var i=0; i < posesStamped.pose.length; i++) {
         var pose = posesStamped.pose[i];
         var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
         var model = pose.id;
     
-        console.log('xx that ' + require('util').inspect(this));
         var lastMsg = this.poseMap[model];
         var filtered = true;
         if(!lastMsg) {
@@ -79,7 +76,7 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
             this.poseMap[pose.id] = newMsg;
             unfilteredMsgs.push(newMsg);
         }
-    } //);
+    }
     return unfilteredMsgs;
 }
 
