@@ -9,7 +9,7 @@ var p1 = {"time":{"sec":2439,"nsec":759000000},"pose":[{"name":"camera","positio
 
 suite('filter', function() {
 
-    test('not filtered', function() {
+    test('default filter: not filtered', function() {
         // do not filter
         var options = {};
         var filter = new gazebojs.PosesFilter(options);
@@ -39,8 +39,23 @@ suite('filter', function() {
         // add p1 messages
         var unfiltered1 = filter.addPosesStamped(p1);
         // some objects moved... 
+        assert.notEqual(unfiltered1.length, 0);
         assert.notEqual(unfiltered1.length, p1.pose.length);
     });
+
+
+    test('rotation filter', function(){
+        var filter = new gazebojs.PosesFilter({timeElapsed : 1000, distance: 1000, quaternion: 0.01 } );
+         // add p0 messages
+        var unfiltered0 = filter.addPosesStamped(p0);
+        assert.equal(unfiltered0.length, p0.pose.length);
+        // add p1 messages
+        var unfiltered1 = filter.addPosesStamped(p1);
+        // some objects rotated.. 
+        assert.notEqual(unfiltered1.length, 0);
+        assert.notEqual(unfiltered1.length, p1.pose.length);
+    });
+
 
    test('time too short, no messages pass through', function(){
         var filter = new gazebojs.PosesFilter({timeElapsed : 1.0e-6 } );

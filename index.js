@@ -11,8 +11,41 @@ var util = require('util');
 //  - quaternion: a message cannot be ignored if the dot product of the quaternion
 //    is larger than this value.
 function PosesFilter (options) {
-    this.poseMap = {};
+    this.reset(options);
+}
 
+exports.PosesFilter = PosesFilter;
+
+PosesFilter.prototype.hasMoved = function(oldPosition, position, dist)
+{
+    var x = oldPosition.x - position.x;
+    var y = oldPosition.y - position.y;
+    var z = oldPosition.z - position.z;
+    var translation2 = x*x + y*y + z*z 
+    return translation2 > (dist * dist);
+}
+
+PosesFilter.prototype.hasTurned = function(oldOrientation, orientation, quat)
+{
+    var dotProduct = oldOrientation.w * orientation.w;
+    dotProduct += oldOrientation.x * orientation.x;
+    dotProduct += oldOrientation.y * orientation.y;
+    dotProduct += oldOrientation.z * orientation.z;
+    var turn = Math.abs(1 - dotProduct) >  quat;
+    return turn;
+}
+
+PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
+{
+    var ds = newTime.sec - oldTime.sec;
+    var dn = newTime.nsec - oldTime.nsec;
+    var age = ds * 1e9 + dn;
+    var old =  age >  nsecs;
+    return old;
+} 
+
+PosesFilter.prototype.reset = function(options) {
+    this.poseMap = {};
     this.timeElapsed = 0;
     this.distance = 0;
     this.quaternion = 0;
@@ -28,39 +61,13 @@ function PosesFilter (options) {
             this.quaternion = options.quaternion;
         }
     }
-
-    this.nsec = 1e9 * this.timeElapsed;
-    this.d2 = this.distance * this.distance;
 }
-
-exports.PosesFilter = PosesFilter;
-
-PosesFilter.prototype.hasMoved = function(oldPosition, position, dist2)
-{
-    var x = oldPosition.x - position.x;
-    var y = oldPosition.y - position.y;
-    var z = oldPosition.z - position.z;
-    var translation2 = x*x + y*y + z*z 
-    return translation2 > dist2;
-}
-
-PosesFilter.prototype.hasTurned = function(oldOrientation, orientation, quat)
-{
-    return false;
-}
-
-PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
-{
-    var ds = newTime.sec - oldTime.sec;
-    var dn = newTime.nsec - oldTime.nsec;
-    var age = ds * 1e9 + dn;
-    var old =  age >  nsecs;
-    return old;
-} 
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
+
     var unfilteredMsgs = [];
     var newTime = posesStamped.time;
+    var nsec = 1e9 * this.timeElapsed;
 
     for(var i=0; i < posesStamped.pose.length; i++) {
         var pose = posesStamped.pose[i];
@@ -71,22 +78,18 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
         var filtered = true;
         
         if (lastMsg) {
-            var old = this.isOld(lastMsg.time, newMsg.time, this.nsec);
-            var far = this.hasMoved(lastMsg.position, newMsg.position, this.d2);
+            var old = this.isOld(lastMsg.time, newMsg.time, nsec);
+            var far = this.hasMoved(lastMsg.position, newMsg.position, this.distance);
             var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion);
+            // console.log(pose.name + ' old: ' + old + ' far:' + far + ' twist:' + twisted);
             if(old || far || twisted) {
-                console.log('old: ' + old + ' far:' + far + ' twist:' + twisted);
                 filtered = false;   
             }
         }
         if (!lastMsg || !filtered) {
-            if (!filtered) console.log('NOT filtered');
-            if (!lastMsg)  console.log('new model: ' + pose.name);
             this.poseMap[pose.id] = newMsg;
             unfilteredMsgs.push(newMsg);
         }
-        else console.log('FIL!');
-    
     }
     return unfilteredMsgs;
 }
