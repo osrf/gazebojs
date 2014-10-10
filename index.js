@@ -61,6 +61,9 @@ PosesFilter.prototype.reset = function(options) {
             this.quaternion = options.quaternion;
         }
     }
+   // statistics
+   this.msgCount = 0;
+   this.filteredCount = 0;
 }
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
@@ -90,10 +93,17 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
             this.poseMap[pose.id] = newMsg;
             unfilteredMsgs.push(newMsg);
         }
+        // stats
+        if(filtered)  this.filteredCount +=1;
+        this.msgCount += 1;
     }
     return unfilteredMsgs;
 }
 
+PosesFilter.prototype.stats = function() {
+    var p = 100 * (this.msgCount / this.filteredCount);
+    console.log( 'messag compression:'+ p + '% (' + this.msgCount + ' total)' );
+}   
 
 
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
