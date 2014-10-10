@@ -3,7 +3,7 @@ var gz = require('./build/Release/gazebo');
 var fs = require('fs');
 var Jpeg = require('jpeg').Jpeg; 
 var Png = require('png').Png;
-
+var util = require('util');
 
 // the options determine how a message is filtered
 //  - timeElapsed: a message cannot be ignored if is older than this value
@@ -19,36 +19,44 @@ function PosesFilter (options) {
     if(options) {
         if(options.timeElapsed) {
             this.timeElapsed = options.timeElapsed;
-            this.nsec = 1e9 * this.timeElapsed;
 
         }
         if(options.distance) {
             this.distance = options.distance;
-            this.d2 = this.distance * this.distance;
         }
         if(options.quaternion) {
             this.quaternion = options.quaternion;
         }
     }
 
+    this.nsec = 1e9 * this.timeElapsed;
+    this.d2 = this.distance * this.distance;
 }
 
 exports.PosesFilter = PosesFilter;
 
-PosesFilter.prototype.hasMoved = function(oldPosition, position, dist)
+PosesFilter.prototype.hasMoved = function(oldPosition, position, dist2)
 {
-    return True;
+    var x = oldPosition.x - position.x;
+    var y = oldPosition.y - position.y;
+    var z = oldPosition.z - position.z;
+    var translation2 = x*x + y*y + z*z 
+    return translation2 > dist2;
 }
 
 PosesFilter.prototype.hasTurned = function(oldOrientation, orientation, quat)
 {
-    return True;
+    return false;
 }
 
 PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
 {
-    return True;
-}
+    var ds = newTime.sec - oldTime.sec;
+    var dn = newTime.nsec - oldTime.nsec;
+    var age = ds * 1e9 + dn;
+    var old =  age >  nsecs;
+    return old;
+} 
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
     var unfilteredMsgs = [];
@@ -61,21 +69,24 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
     
         var lastMsg = this.poseMap[model];
         var filtered = true;
-        if(!lastMsg) {
-            filtered = false;
-        }
-        else {
+        
+        if (lastMsg) {
             var old = this.isOld(lastMsg.time, newMsg.time, this.nsec);
             var far = this.hasMoved(lastMsg.position, newMsg.position, this.d2);
             var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion);
             if(old || far || twisted) {
-                filtered = false;    
+                console.log('old: ' + old + ' far:' + far + ' twist:' + twisted);
+                filtered = false;   
             }
         }
-        if (!filtered) {
+        if (!lastMsg || !filtered) {
+            if (!filtered) console.log('NOT filtered');
+            if (!lastMsg)  console.log('new model: ' + pose.name);
             this.poseMap[pose.id] = newMsg;
             unfilteredMsgs.push(newMsg);
         }
+        else console.log('FIL!');
+    
     }
     return unfilteredMsgs;
 }
