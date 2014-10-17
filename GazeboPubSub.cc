@@ -106,7 +106,8 @@ void GzSubscriber::GzCallback(const string &_msg)
 GzSubscriber::~GzSubscriber()
 {
   // clean up sub
-  Trace( "GzSubscriber::GzCallback");  
+  Trace( "GzSubscriber::GzCallback");
+  this->sub->Unsubscribe();
 }
 
 /////////////////////////////////////////////////
