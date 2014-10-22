@@ -107,7 +107,12 @@ GzSubscriber::~GzSubscriber()
 {
   // clean up sub
   Trace( "GzSubscriber::GzCallback");
-  this->sub->Unsubscribe();
+
+  // unsubscribe has a problem in Gazebo (Issue #602)
+  // this->sub->Unsubscribe();
+
+  // so instead, we'll simply reset
+  this->sub.reset();
 }
 
 /////////////////////////////////////////////////

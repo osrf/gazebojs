@@ -1,5 +1,13 @@
 
+
+
+// to complie in debug mode, use
+// node-gyp configure --debug 
+// and select the module in the debug dir:
+// var gz = require('./build/Debug/gazebo');
+
 var gz = require('./build/Release/gazebo');
+
 var fs = require('fs');
 var Jpeg = require('jpeg').Jpeg; 
 var Png = require('png').Png;
