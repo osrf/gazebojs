@@ -314,7 +314,6 @@ Handle<Value> GZPubSub::Subscribe(const Arguments& args)
 
   try
   {
-    // cout << "GZPubSub::Subscribe() topic = [" << topic << "]" << endl;  
     GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
     obj->gazebo->Subscribe(cb, type.c_str(), topic.c_str(), latch);
   }
@@ -352,7 +351,6 @@ Handle<Value> GZPubSub::Unsubscribe(const Arguments& args)
   String::Utf8Value sarg(args[0]->ToString());
   std::string topic(*sarg);
 
-  cout << "GZPubSub::Unsubscribe() topic = [" << topic << "]" << endl;
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
   obj->gazebo->Unsubscribe(topic.c_str());
   return scope.Close(Undefined());

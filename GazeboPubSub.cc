@@ -186,8 +186,7 @@ GazeboPubSub::GazeboPubSub()
 /////////////////////////////////////////////////
 GazeboPubSub::~GazeboPubSub()
 {
-
-  cout << "GazeboPubSub::~GazeboPubSub()" << endl;
+  Trace("GazeboPubSub::~GazeboPubSub()");
 
   this->factoryPub.reset();
   this->worldControlPub.reset();
