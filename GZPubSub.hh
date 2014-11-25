@@ -94,6 +94,12 @@ namespace gzscript
 
     private: static v8::Handle<v8::Value>
         GetModelFile(const v8::Arguments& args);
+
+    private: static v8::Handle<v8::Value>
+        GetModelConfig(const v8::Arguments& args);
+
+    private: static v8::Handle<v8::Value>
+        FindFile(const v8::Arguments& args);
   
     private: GazeboJsPubSub* gazebo;
 

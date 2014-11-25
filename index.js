@@ -11,6 +11,7 @@ var gz = require('./build/Release/gazebo');
 var fs = require('fs');
 var Jpeg = require('jpeg').Jpeg; 
 var Png = require('png').Png;
+var path = require('path');
 var util = require('util');
 
 // the options determine how a message is filtered
@@ -158,11 +159,6 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
 }
 
 
-
-Gazebo.prototype.subscribeToFilteredPose = function(topic, cb, options) {
-    var m;
-}
-
 Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
     
     var format = 'jpeg';
@@ -235,17 +231,39 @@ Gazebo.prototype.publish = function (type, topic, msg, options) {
 Gazebo.prototype.model = function(model_name, cb) {
     var modelFile = this.sim.modelFile(model_name);
     fs.readFile(modelFile, function(err, data){
+        if(err){
+            cb(err);
+        }
         var str = '';
         if(data){
             // fs returns a Buffer, get a string instead
             str = data.toString('utf8');
         }
         // serve it
-        cb(err, str);
+        cb(null, str);
     });
 }
 
 
+Gazebo.prototype.readFile = function(model_uri) {
+    var modelFile = this.sim.findFile(model_uri);
+    fs.readFile(modelFile, function(err, data){
+        if(err){
+            cb(err);
+        }
+        var str = '';
+        if(data){
+            // serve it as a buffer
+            cb(null, data);
+        }
+    });
+
+}
+
+Gazebo.prototype.modelConfig = function(model_uri, cb){
+    var p = this.sim.find_file(model_uri);
+    cb(null, conf);
+}
 
 exports.connect = function (options ) {
     return new Gazebo(options);

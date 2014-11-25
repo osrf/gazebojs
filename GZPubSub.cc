@@ -28,20 +28,17 @@
 #include <list>
 #include <map>
 #include <gazebo/msgs/msgs.hh>
+#include <gazebo/common/CommonIface.hh>
+#include <gazebo/common/ModelDatabase.hh>
 ///////////////
 
 #include "GZPubSub.hh"
 #include "GazeboPubSub.hh"
 
-#include <gazebo/common/ModelDatabase.hh>
-
 
 using namespace v8;
 using namespace gzscript;
 using namespace std;
-
-
-
 
 
 /////////////////////////////////////////////////
@@ -99,6 +96,12 @@ void GZPubSub::Init(Handle<Object> exports)
 
   tp1->PrototypeTemplate()->Set(String::NewSymbol("modelFile"),
       FunctionTemplate::New(GetModelFile)->GetFunction());
+
+  tp1->PrototypeTemplate()->Set(String::NewSymbol("modelConfig"),
+      FunctionTemplate::New(GetModelConfig)->GetFunction());
+
+  tp1->PrototypeTemplate()->Set(String::NewSymbol("findFile"),
+      FunctionTemplate::New(FindFile)->GetFunction());
 
   // export the template
   Persistent<Function> constructor2 =
@@ -165,6 +168,55 @@ Handle<Value> GZPubSub::GetModelFile(const Arguments& args)
 
   return scope.Close(String::New(model.c_str()));
 }
+
+/////////////////////////////////////////////////
+Handle<Value> GZPubSub::GetModelConfig(const Arguments& args)
+{
+  HandleScope scope;
+  if ( args.Length() != 1 )
+  {
+    ThrowException(Exception::TypeError(
+        String::New("Wrong number of arguments. 1 expected")));
+    return scope.Close(Undefined());
+  }
+
+  if (!args[0]->IsString())
+  {
+    ThrowException(Exception::TypeError(
+        String::New("Wrong argument type. Uri String model name expected.")));
+    return scope.Close(Undefined());
+  }
+  String::Utf8Value sarg0(args[0]->ToString());
+  std::string uri(*sarg0);
+  std::string config = gazebo::common::ModelDatabase::Instance()->GetModelConfig(uri);
+  return scope.Close(String::New(config.c_str()));
+}
+
+/////////////////////////////////////////////////
+Handle<Value> GZPubSub::FindFile(const Arguments& args)
+{
+  HandleScope scope;
+  if ( args.Length() != 1 )
+  {
+    ThrowException(Exception::TypeError(
+        String::New("Wrong number of arguments. 1 expected")));
+    return scope.Close(Undefined());
+  }
+
+  if (!args[0]->IsString())
+  {
+    ThrowException(Exception::TypeError(
+        String::New("Wrong argument type. Uri String model name expected.")));
+    return scope.Close(Undefined());
+  }
+  String::Utf8Value sarg0(args[0]->ToString());
+  std::string uri(*sarg0);
+
+  //std::cout << "GZPubSub::GetMesh [" << uri << "] hasmodel: " << gazebo::common::ModelDatabase::Instance()->HasModel(uri) << std::endl;
+  std::string r = gazebo::common::find_file(uri);
+  return scope.Close(String::New(r.c_str()));
+}
+
 
 /////////////////////////////////////////////////
 Handle<Value> GZPubSub::Spawn(const Arguments& args)
