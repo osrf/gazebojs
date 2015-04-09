@@ -2,7 +2,7 @@
   "targets": [
     {
       "target_name": "gazebo",
-      "sources": [ 
+      "sources": [
         "GZPubSub.cc", "GZPubSub.hh",
         "PubSub.cc", "PubSub.hh",
         "GazeboPubSub.cc", "GazeboPubSub.hh",
@@ -14,7 +14,8 @@
       "conditions": [
         ['OS=="linux"', {
           'cflags': [
-            '<!@(pkg-config --cflags gazebo jansson protobuf)'
+            '<!@(pkg-config --cflags gazebo jansson protobuf)',
+            '-std=c++11'
           ],
           'ldflags': [
             '<!@(pkg-config --libs-only-L --libs-only-other gazebo jansson protobuf)'
