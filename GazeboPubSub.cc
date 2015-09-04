@@ -36,7 +36,7 @@ static bool trace = false;
 void Trace(const char *m)
 {
   if(trace) cout << "[GazeboPubSub] "  << m << endl;
-  
+
 }
 
 /////////////////////////////////////////////////
@@ -68,7 +68,7 @@ void GzPublisher::Publish(const char *msg)
    // create a protobuf message
    boost::shared_ptr<google::protobuf::Message> pb = gazebo::msgs::MsgFactory::NewMsg(this->type);
    // fill it with json data
-   json2pb(*pb, msg, strlen(msg) ); 
+   json2pb(*pb, msg, strlen(msg) );
    // publish it
    this->pub->Publish( *(pb.get()) );
    // pb auto cleans up
@@ -90,7 +90,7 @@ GzSubscriber::GzSubscriber(gazebo::transport::NodePtr &_node, const char* _type,
 void GzSubscriber::GzCallback(const string &_msg)
 {
   Trace("GzCallback");
-  // make an empty protobuf 
+  // make an empty protobuf
   boost::shared_ptr<google::protobuf::Message> pb = gazebo::msgs::MsgFactory::NewMsg(this->type);
   // load it with the gazebo data
   pb->ParseFromString(_msg);
@@ -128,7 +128,7 @@ void GazeboPubSub::Pause()
 {
   gazebo::msgs::WorldControl worldControlMsg;
   worldControlMsg.set_pause(1);
-  this->worldControlPub->Publish(worldControlMsg);  
+  this->worldControlPub->Publish(worldControlMsg);
 }
 
 /////////////////////////////////////////////////
@@ -136,7 +136,7 @@ void GazeboPubSub::Play()
 {
   gazebo::msgs::WorldControl worldControlMsg;
   worldControlMsg.set_pause(0);
-  this->worldControlPub->Publish(worldControlMsg);  
+  this->worldControlPub->Publish(worldControlMsg);
 }
 
 
@@ -213,8 +213,8 @@ void GazeboPubSub::SpawnModel(const char *_type,
   std::string name(_name);
   std::string type(_type);
 
-  gazebo::math::Vector3 pos(x, y, z);
-  gazebo::math::Vector3 rpy(rx, ry, rz);
+  ignition::math::Vector3d pos(x, y, z);
+  ignition::math::Vector3d rpy(rx, ry, rz);
 
   if(type == "box" || type == "sphere" || type == "cylinder")
   {
@@ -241,8 +241,8 @@ void GazeboPubSub::SpawnModel(const char *_type,
 
     newModelStr << "<sdf version ='" << SDF_VERSION << "'>"
         << "<model name='" << name << "'>"
-        << "<pose>" << pos.x << " " << pos.y << " " << pos.z << " "
-                    << rpy.x << " " << rpy.y << " " << rpy.z << "</pose>"
+        << "<pose>" << pos.X() << " " << pos.Y() << " " << pos.Z() << " "
+                    << rpy.X() << " " << rpy.Y() << " " << rpy.Z() << "</pose>"
         << "<link name ='link'>"
         <<   "<inertial><mass>1.0</mass></inertial>"
         <<   "<collision name ='collision'>"
@@ -270,9 +270,9 @@ void GazeboPubSub::SpawnModel(const char *_type,
   {
     newModelStr << "<sdf version ='" << SDF_VERSION << "'>"
           << "<model name='" << name << "'>"
-          << "  <pose>" << pos.x << " " << pos.y << " "
-                        << pos.z << " " << rpy.x << " "
-                        << rpy.y << " " << rpy.z << "</pose>"
+          << "  <pose>" << pos.X() << " " << pos.Y() << " "
+                        << pos.Z() << " " << rpy.X() << " "
+                        << rpy.Y() << " " << rpy.Z() << "</pose>"
           << "  <include>"
           << "    <uri>" << type << "</uri>"
           << "  </include>"
