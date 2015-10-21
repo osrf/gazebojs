@@ -105,7 +105,7 @@ void PubSub::Publish(const char*_type, const char *_topic, const char *_msg)
   std::map< string, Publisher*  >::iterator it = this->pubs.find(t);
   if(it != this->pubs.end())
   {
-    pub = it->second; 
+    pub = it->second;
   }
   else
   {

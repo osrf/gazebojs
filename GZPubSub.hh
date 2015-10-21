@@ -36,16 +36,20 @@ namespace gzscript
 
   class GazeboJsSubscriber: public GzSubscriber
   {
-    public: GazeboJsSubscriber(gazebo::transport::NodePtr &_node, v8::Persistent<v8::Function>& function,  const char* type, const char* topic, bool latch);
+    public: GazeboJsSubscriber(gazebo::transport::NodePtr &_node,
+                               v8::Persistent<v8::Function>& function,
+                               const char* type,
+                               const char* topic,
+                               bool latch);
 
-    public: virtual ~GazeboJsSubscriber();  
+    public: virtual ~GazeboJsSubscriber();
 
     protected: virtual void Callback(const char* _msg);
-   
+
     private:  static void doCallback(uv_async_t* handle, int status);
 
     private:  static void close_cb (uv_handle_t* handle);
- 
+
     private: uv_async_t*  handle;
 
     private: v8::Persistent<v8::Function>  function;
@@ -53,9 +57,7 @@ namespace gzscript
 
   class GazeboJsPubSub : public GazeboPubSub
   {
-    public: void  Subscribe(v8::Persistent<v8::Function>& function, const char* type, const char* topic, bool latch); 
-
-//  public: void  ImageSubscribe(v8::Persistent<v8::Function>& function, const char* type, const char* topic, bool compressed);
+    public: void  Subscribe(v8::Persistent<v8::Function>& function, const char* type, const char* topic, bool latch);
   };
 
   class GZPubSub : public node::ObjectWrap
@@ -100,7 +102,7 @@ namespace gzscript
 
     private: static v8::Handle<v8::Value>
         FindFile(const v8::Arguments& args);
-  
+
     private: GazeboJsPubSub* gazebo;
 
   };

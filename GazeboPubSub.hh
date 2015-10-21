@@ -28,10 +28,8 @@ namespace gzweb
   class OgreMaterialParser;
 }
 
-
 namespace gzscript
 {
-
   class GzPublisher: public Publisher
   {
     public: GzPublisher(gazebo::transport::NodePtr &_node, const char* _type, const char* _topic);
@@ -41,9 +39,7 @@ namespace gzscript
     public: virtual void Publish(const char *msg);
 
     private: gazebo::transport::PublisherPtr pub;
-     
   };
-
 
   class GzSubscriber: public Subscriber
   {
@@ -54,9 +50,7 @@ namespace gzscript
     private: void GzCallback(const std::string &_msg);
 
     private: gazebo::transport::SubscriberPtr sub;
-
   };
-
 
   class GazeboPubSub : public PubSub
   {
@@ -70,7 +64,7 @@ namespace gzscript
 
     public: void Pause();
 
-    public: void Play(); 
+    public: void Play();
 
     public: void SpawnModel(const char *_type,
                          const char *_name,
@@ -82,23 +76,19 @@ namespace gzscript
                          double rz);
 
     public: std::vector<std::string> GetMaterials();
- 
+
     /// \brief Gazebo transport node.
     protected: gazebo::transport::NodePtr node;
 
     /// \brief Ogre material parser.
     private: gzweb::OgreMaterialParser *materialParser;
 
-    /// \brief lots of spawn 
+    /// \brief lots of spawn
     private: gazebo::transport::PublisherPtr factoryPub;
 
     /// \brief Publish world control messages
     private: gazebo::transport::PublisherPtr worldControlPub;
-
   };
-
-
 }
-
 
 #endif

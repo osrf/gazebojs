@@ -30,10 +30,9 @@ namespace gzscript
   class PubSubException : public std::runtime_error
   {
     /// \brief Constructor
-    /// param[in] m the exception message 
+    /// param[in] m the exception message
     public: PubSubException(const char*m) :std::runtime_error(m){}
   };
-
 
   class Publisher
   {
@@ -42,12 +41,11 @@ namespace gzscript
     public: virtual ~Publisher();
 
     public: virtual void Publish(const char* msg);
-    
+
     public: const std::string type;
 
     public: const std::string topic;
   };
-
 
   class Subscriber
   {
@@ -58,12 +56,11 @@ namespace gzscript
     protected: virtual void Callback(const char *msg);
 
     public: const bool latch;
-    
+
     public: const std::string type;
 
     public: const std::string topic;
   };
-
 
   class PubSub
   {
@@ -75,12 +72,12 @@ namespace gzscript
     public: virtual ~PubSub();
 
     public: void Publish(const char* type, const char *topic, const char *msg);
-    
+
     protected: void AddSubscriber(Subscriber *subscriber);
 
     public: void Unsubscribe(const char* topic);
 
-    // public: std::vector<std::string> ListTopics(); 
+    // public: std::vector<std::string> ListTopics();
 
     public: std::vector<std::string> Subscriptions();
 
@@ -89,8 +86,6 @@ namespace gzscript
     private: std::map<std::string, Publisher*> pubs;
 
     private: std::vector<Subscriber*> subs;
-
-
   };
 
 }
