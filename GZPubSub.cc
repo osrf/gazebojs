@@ -40,6 +40,7 @@ using namespace v8;
 using namespace gzscript;
 using namespace std;
 
+v8::Persistent<v8::Function> GZPubSub::constructor;
 
 /////////////////////////////////////////////////
 void InitAll(Handle<Object> exports)
@@ -63,186 +64,184 @@ GZPubSub::~GZPubSub()
 /////////////////////////////////////////////////
 void GZPubSub::Init(Handle<Object> exports)
 {
+  Isolate* isolate = exports->GetIsolate();
 
   // Prepare constructor template
-  Local<FunctionTemplate> tp1 = FunctionTemplate::New(New);
-  tp1->SetClassName(String::NewSymbol("Sim"));
+  Local<FunctionTemplate> tp1 = FunctionTemplate::New(isolate, New);
+  tp1->SetClassName(String::NewFromUtf8(isolate, "Sim"));
   tp1->InstanceTemplate()->SetInternalFieldCount(1);
 
   // Prototype
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("subscribe"),
-      FunctionTemplate::New(Subscribe)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("unsubscribe"),
-      FunctionTemplate::New(Unsubscribe)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("subscriptions"),
-      FunctionTemplate::New(Subscriptions)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("publish"),
-      FunctionTemplate::New(Publish)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("materials"),
-      FunctionTemplate::New(GetMaterials)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("pause"),
-      FunctionTemplate::New(Pause)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("play"),
-      FunctionTemplate::New(Play)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("spawn"),
-      FunctionTemplate::New(Spawn)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("modelFile"),
-      FunctionTemplate::New(GetModelFile)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("modelConfig"),
-      FunctionTemplate::New(GetModelConfig)->GetFunction());
-
-  tp1->PrototypeTemplate()->Set(String::NewSymbol("findFile"),
-      FunctionTemplate::New(FindFile)->GetFunction());
+  NODE_SET_PROTOTYPE_METHOD(tp1, "unsubscribe", Unsubscribe);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "subscriptions", Subscriptions);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "publish", Publish);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "pause", Pause);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "play", Play);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "spawn", Spawn);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
 
   // export the template
-  Persistent<Function> constructor2 =
-      Persistent<Function>::New(tp1->GetFunction());
-  exports->Set(String::NewSymbol("Sim"), constructor2);
-
+  constructor.Reset(isolate, tp1->GetFunction());
+  exports->Set(String::NewFromUtf8(isolate, "Sim"), tp1->GetFunction());
 }
 
-
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::New(const Arguments& args)
+void GZPubSub::New(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
-
- GZPubSub* obj = new GZPubSub();
-  obj->Wrap(args.This());
-
-  return args.This();
+  HandleScope scope(args.GetIsolate());
+  if (args.IsConstructCall()) {
+    // Invoked as constructor: `new MyObject(...)`
+    // double value = args[0]->IsUndefined() ? 0 : args[0]->NumberValue();
+    GZPubSub* obj = new GZPubSub();
+    obj->Wrap(args.Holder());
+    args.GetReturnValue().Set(args.Holder());
+  } else {
+    // Invoked as plain function `MyObject(...)`, turn into construct call.
+    const int argc = 1;
+    Local<Value> argv[argc] = { args[0] };
+    Local<Function> cons = Local<Function>::New(args.GetIsolate(), constructor);
+    args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+  }
 }
 
 //////////////////////////////////////////////////
-Handle<Value> GZPubSub::Pause(const Arguments& args)
+void GZPubSub::Pause(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   obj->gazebo->Pause();
-  return scope.Close(Undefined());
+  
+  args.GetReturnValue().SetUndefined();	
 }
 
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Play(const Arguments& args)
+void GZPubSub::Play(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
-  obj->gazebo->Play();
-  return scope.Close(Undefined());
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
+  obj->gazebo->Pause();
+  
+  args.GetReturnValue().SetUndefined();
 }
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::GetModelFile(const Arguments& args)
+void GZPubSub::ModelFile(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
   if ( args.Length() != 1 )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments. 1 expected")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(), 
+	"Wrong number of arguments. 1 expected"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Uri String model name expected.")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(), 
+	"Wrong argument type. Uri String model name expected."));
+    return;
   }
 
   String::Utf8Value sarg0(args[0]->ToString());
   std::string uri(*sarg0);
   std::string model = gazebo::common::ModelDatabase::Instance()->GetModelFile(uri);
-
-  return scope.Close(String::New(model.c_str()));
+  v8::Handle<v8::String> returnStr = v8::String::NewFromUtf8(
+    args.GetIsolate(), model.c_str());
+  args.GetReturnValue().Set(returnStr);
 }
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::GetModelConfig(const Arguments& args)
+void GZPubSub::ModelConfig(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
+
   if ( args.Length() != 1 )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments. 1 expected")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong number of arguments. 1 expected"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Uri String model name expected.")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong argument type. Uri String model name expected."));
+    return;
   }
   String::Utf8Value sarg0(args[0]->ToString());
   std::string uri(*sarg0);
   std::string config = gazebo::common::ModelDatabase::Instance()->GetModelConfig(uri);
-  return scope.Close(String::New(config.c_str()));
+  v8::Handle<v8::String> returnStr = v8::String::NewFromUtf8(args.GetIsolate(), config.c_str());
+  args.GetReturnValue().Set(returnStr);
 }
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::FindFile(const Arguments& args)
+void GZPubSub::FindFile(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
+
   if ( args.Length() != 1 )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments. 1 expected")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong number of arguments. 1 expected"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Uri String model name expected.")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong argument type. Uri String model name expected."));
+    return;
   }
   String::Utf8Value sarg0(args[0]->ToString());
   std::string uri(*sarg0);
-
-  //std::cout << "GZPubSub::GetMesh [" << uri << "] hasmodel: " << gazebo::common::ModelDatabase::Instance()->HasModel(uri) << std::endl;
   std::string r = gazebo::common::find_file(uri);
-  return scope.Close(String::New(r.c_str()));
+  v8::Handle<v8::String> returnStr = v8::String::NewFromUtf8(args.GetIsolate(), r.c_str());
+  args.GetReturnValue().Set(returnStr);
 }
 
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Spawn(const Arguments& args)
+void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
   // we expect one string argument
   if ( (args.Length() < 2)  || (args.Length() > 8)  )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong number of arguments. 1 expected"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Type String expected as first argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+       v8::String::NewFromUtf8(args.GetIsolate(),
+       "Wrong argument type. Type string expected as first argument."));
+    return;
   }
 
   if (!args[1]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Name String expected as first argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+       v8::String::NewFromUtf8(args.GetIsolate(),
+       "Wrong argument type. Name string expected as first argument."));
+    return;
   }
 
   double pose[6];
@@ -254,13 +253,15 @@ Handle<Value> GZPubSub::Spawn(const Arguments& args)
     if ((unsigned int)args.Length() > argIndex)
     {
       if (!args[argIndex]->IsNumber())
-      {
-        ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Number expected.")));
-        return scope.Close(Undefined());
+      { 
+        std::string msg = "Wrong argument type. Number expected for argument ";
+	msg += std::to_string(argIndex + 1);
+	msg += ".";
+        args.GetIsolate()->ThrowException(
+          v8::String::NewFromUtf8(args.GetIsolate(), msg.c_str()));
+        return;
       }
       pose[i] = args[argIndex]->ToNumber()->NumberValue();
-      
     }
   }
 
@@ -268,79 +269,85 @@ Handle<Value> GZPubSub::Spawn(const Arguments& args)
   std::string type(*sarg0);
   String::Utf8Value sarg1(args[1]->ToString());
   std::string name(*sarg1);
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
 
-  obj->gazebo->SpawnModel(type.c_str(), name.c_str(),  pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]);
-
-  return scope.Close(Undefined());
+  obj->gazebo->SpawnModel(type.c_str(),
+			  name.c_str(),
+                          pose[0],
+                          pose[1],
+                          pose[2],
+                          pose[3],
+                          pose[4],
+                          pose[5]);
+  args.GetReturnValue().SetUndefined();
 }
 
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::GetMaterials(const Arguments& args)
+void GZPubSub::Materials(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
-
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
+  // this function is not asynchronous, but it could (should?) be.
   std::vector<std::string> msgs = obj->gazebo->GetMaterials();
-  Local<Array> arguments = Array::New(msgs.size());
+  Local<Array> result_list = Array::New(args.GetIsolate());
   for (unsigned int i = 0; i < msgs.size(); ++i) {
-    arguments->Set(i ,String::New(msgs[i].c_str()));
+    result_list->Set(i, String::NewFromUtf8(args.GetIsolate(), msgs[i].c_str()));
   }
-
-  return scope.Close(arguments);
+  args.GetReturnValue().Set(result_list);
 }
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Subscriptions(const Arguments& args)
+void GZPubSub::Subscriptions(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
-
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   std::vector<std::string> v = obj->gazebo->Subscriptions();
-  Local<Array> arguments = Array::New(v.size());
+  Local<Array> result_list = Array::New(args.GetIsolate());
   for (unsigned int i = 0; i < v.size(); ++i) {
-    arguments->Set(i ,String::New(v[i].c_str()));
+    result_list->Set(i, String::NewFromUtf8(args.GetIsolate(), v[i].c_str()));
   }
-
-  return scope.Close(arguments);
+  args.GetReturnValue().Set(result_list);
 }
 
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Subscribe(const Arguments& args)
+void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
-  // we expect one string argument
   if ( (args.Length() < 3)  || (args.Length() > 4)  )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong number of arguments."));
+     return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Type String expected as first argument.")));
-    return scope.Close(Undefined());
+     args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong argument type. Type String expected as first argument."));
+     return; 
   } 
 
   if (!args[1]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Topic String expected as second argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Topic String expected as second argument."));
+    return;
   } 
 
   if (!args[2]->IsFunction())
-  {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Function  expected as third argument.")));
-    return scope.Close(Undefined());
+  {     
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Function  expected as third argument."));
+    return;
   }
 
   bool latch = false;
@@ -348,100 +355,105 @@ Handle<Value> GZPubSub::Subscribe(const Arguments& args)
   {
     if (!args[3]->IsBoolean())
     {
-      ThrowException(Exception::TypeError(
-          String::New("Wrong argument type. Latch Boolean expected as third arument.")));
-      return scope.Close(Undefined());
+      args.GetIsolate()->ThrowException(
+        v8::String::NewFromUtf8(args.GetIsolate(),
+        "Wrong argument type. Latch Boolean expected as third arument."));
+      return;
     }
     latch = *args[3]->ToBoolean();
   }
-
-
+  // extract msg type, topic and callback from javascript
   String::Utf8Value sarg0(args[0]->ToString());
   std::string type(*sarg0);
-
   String::Utf8Value sarg1(args[1]->ToString());
   std::string topic(*sarg1);
-
-  v8::Persistent<v8::Function> cb = v8::Persistent<v8::Function>::New(v8::Local<v8::Function>::Cast(args[2]));
-
+  // javascript callback function is in position [2]
+  v8::Handle<v8::Function> arg2 = v8::Handle<v8::Function>::Cast(args[2]);
+  v8::Persistent<v8::Function> cb(args.GetIsolate(), arg2);
+  
   try
   {
-    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
+    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
     obj->gazebo->Subscribe(cb, type.c_str(), topic.c_str(), latch);
   }
   catch(PubSubException &x)
   {
-    ThrowException(Exception::TypeError(
-        String::New(x.what() )));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      x.what()));
+    return;
   }
- 
-  return scope.Close(Undefined());
+  args.GetReturnValue().SetUndefined();
 }
 
 
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Unsubscribe(const Arguments& args)
+void GZPubSub::Unsubscribe(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
   // we expect one string argument
   if (args.Length() < 1)
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong number of arguments"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. String expected.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. String expected."));
+    return;
   }
 
   String::Utf8Value sarg(args[0]->ToString());
   std::string topic(*sarg);
 
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   obj->gazebo->Unsubscribe(topic.c_str());
-  return scope.Close(Undefined());
 
+  args.GetReturnValue().SetUndefined();
 }
 
-
 /////////////////////////////////////////////////
-Handle<Value> GZPubSub::Publish(const Arguments& args)
+void GZPubSub::Publish(const FunctionCallbackInfo<Value>& args)
 {
-  HandleScope scope;
+  HandleScope scope(args.GetIsolate());
 
   // we expect one string argument
   if ( (args.Length() != 3)  )
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong number of arguments. 3 expected")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong number of arguments. 3 expected"));
+    return;
   }
 
   if (!args[0]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Type String expected as first argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Type String expected as first argument."));
+    return;
   }
 
   if (!args[1]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Topic String expected as second argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Topic String expected as second argument."));
+    return;
   }
 
   if (!args[2]->IsString())
   {
-    ThrowException(Exception::TypeError(
-        String::New("Wrong argument type. Message String expected as third argument.")));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Message String expected as third argument."));
+    return;
   }
 
   String::Utf8Value sarg0(args[0]->ToString());
@@ -455,17 +467,17 @@ Handle<Value> GZPubSub::Publish(const Arguments& args)
 
   try
   {
-    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.This());
+    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
     obj->gazebo->Publish(type.c_str(), topic.c_str(), msg.c_str());
   }
   catch(PubSubException &x)
   {
-    ThrowException(Exception::TypeError(
-        String::New(x.what() )));
-    return scope.Close(Undefined());
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      x.what() ));
+    return;
   }
-
-  return scope.Close(Undefined());  
+  args.GetReturnValue().SetUndefined();
 }
 
 /////////////////////////////////////////////////
@@ -477,11 +489,14 @@ void GazeboJsPubSub::Subscribe(v8::Persistent<v8::Function>& _function, const ch
 
 /////////////////////////////////////////////////
 GazeboJsSubscriber::GazeboJsSubscriber(gazebo::transport::NodePtr &_node, v8::Persistent<v8::Function>& _function,  const char* _type, const char* _topic, bool _latch)
-  :GzSubscriber(_node, _type, _topic, _latch), function(_function)
+  :GzSubscriber(_node, _type, _topic, _latch)
 {
+  Isolate * isolate = Isolate::GetCurrent();
+  this->function.Reset(isolate, _function);
   // setup the inter thread notification handle (from the main script engine thread)
   this->handle = (uv_async_t*)malloc(sizeof(uv_async_t));
-  uv_async_init(uv_default_loop(), this->handle, GazeboJsSubscriber::doCallback);
+  uv_async_cb cb = (uv_async_cb)GazeboJsSubscriber::doCallback;
+  uv_async_init(uv_default_loop(), this->handle, cb);
 }
 
 
@@ -503,31 +518,39 @@ void GazeboJsSubscriber::close_cb(uv_handle_t* _handle)
 /////////////////////////////////////////////////
 void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
 {
-  v8::HandleScope scope;
+  Isolate * isolate = Isolate::GetCurrent();
+  v8::HandleScope scope(isolate);
   const unsigned argc = 2;
   JsCallbackData* p = (JsCallbackData*)_handle->data;
   v8::Handle<v8::Value> argv[argc] = {
-    v8::Local<Value>::New(Null()),    
-    v8::Local<v8::Value>::New(v8::String::New(p->pbData.c_str()))
+    v8::Null(isolate),    
+    v8::String::NewFromUtf8(isolate, p->pbData.c_str())
   };
-
+  // errors?
+  // todo
+  // exceptions? 
   v8::TryCatch try_catch;
-  (*p->func)->Call(v8::Context::GetCurrent()->Global(), argc, argv);
 
+//  (*p->func)->Call(v8::Context::GetCurrent()->Global(), argc, argv);
+
+  v8::Persistent<v8::Function> &callback = p->func;
+  Local<Function>::New(isolate, callback)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
+  // free data
+  callback.Reset();
   delete p;
-
+  
   if (try_catch.HasCaught()) {
-    node::FatalException(try_catch);
+    node::FatalException(isolate, try_catch);
   }
-
 }
 
 
 /////////////////////////////////////////////////
 void  GazeboJsSubscriber::Callback(const char *_msg)
 {
+  Isolate * isolate = Isolate::GetCurrent();
   JsCallbackData* p = new JsCallbackData();
-  p->func = &function;
+  p->func.Reset(isolate, this->function);
   p->pbData = _msg;
   //  fprintf(stderr, "receiving message (thread::%d) ->\n", thread_id());
   this->handle->data = (void *)p;

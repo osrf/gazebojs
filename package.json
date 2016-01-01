@@ -20,7 +20,6 @@
   "author": "Hugo Boyer",
   "license": "Apache",
   "dependencies": {
-    "jpeg": "^2.0.0",
     "mocha": "^1.21.4",
     "node-gyp": "~1.0.1",
     "png": "^3.0.3"

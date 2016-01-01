@@ -19,6 +19,7 @@
 #define _GZPUBSUB_HH_
 
 #include <node.h>
+#include <node_object_wrap.h>
 
 #include "GazeboPubSub.hh"
 
@@ -29,7 +30,7 @@ namespace gzscript
 
   // inter thread communication data
   class JsCallbackData {
-    public: v8::Persistent<v8::Function>* func;
+    public: v8::Persistent<v8::Function> func;
     public: std::string pbData;
   };
 
@@ -68,40 +69,35 @@ namespace gzscript
 
     private: ~GZPubSub();
 
-    private: static v8::Handle<v8::Value> New(const v8::Arguments& args);
+    // private: static v8::Handle<v8::Value> New(const v8::Arguments& args);
+    private: static void New(const v8::FunctionCallbackInfo<v8::Value>& args);   
 
-    private: static v8::Handle<v8::Value>
-        Subscribe(const v8::Arguments& args);
+    private: static void Subscribe(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Subscriptions(const v8::Arguments& args);
+    private: static void Subscriptions(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Unsubscribe(const v8::Arguments& args);
+    private: static void Unsubscribe(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        GetMaterials(const v8::Arguments& args);
+    /// \brief Gets the list of Materials
+    private: static void Materials(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Publish(const v8::Arguments& args);
+    private: static void Publish(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Pause(const v8::Arguments& args);
+    private: static void Pause(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Play(const v8::Arguments& args);
+    private: static void Play(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        Spawn(const v8::Arguments& args);
+    private: static void  Spawn(const v8::FunctionCallbackInfo<v8::Value>& args);
+    
+    /// \brief Get a model's sdf file
+    private: static void ModelFile(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        GetModelFile(const v8::Arguments& args);
+    /// \brief Get a model's config file
+    private: static void ModelConfig(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        GetModelConfig(const v8::Arguments& args);
+    private: static void FindFile(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Handle<v8::Value>
-        FindFile(const v8::Arguments& args);
+    private: static v8::Persistent<v8::Function> constructor;    
 
     private: GazeboJsPubSub* gazebo;
 
