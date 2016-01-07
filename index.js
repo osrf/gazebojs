@@ -9,8 +9,8 @@
 var gz = require('./build/Release/gazebo');
 
 var fs = require('fs');
-var Jpeg = require('jpeg').Jpeg; 
-var Png = require('png').Png;
+// var Png = require('png').Png;
+// var Jpeg = require('jpeg').Jpeg; 
 var path = require('path');
 var util = require('util');
 
@@ -188,6 +188,10 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             var image = image_msg.image;
             var rgb = new Buffer(image.data, 'base64');
             if(format == 'jpeg') {
+                cb ("jpeg support is missing!");
+return;
+var Jpeg = require('jpeg').Jpeg; 
+
                 var jpeg = new Jpeg(rgb, image.width, image.height);
                 jpeg.encode(function (img, error) {
                     if(error) {
@@ -199,7 +203,10 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
                     }
                 });
             }
-            if(format =='png')  {
+            if(format =='png') {   
+              cb("jpeg support is missing!");
+              return;
+var Png = require('png').Png;
                 var png = new Png(rgb, image.width, image.height);
                 png.encode(function (img, error) {
                      if(error) {

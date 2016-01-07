@@ -136,6 +136,7 @@ void GazeboPubSub::Play()
 {
   gazebo::msgs::WorldControl worldControlMsg;
   worldControlMsg.set_pause(0);
+  std::cout << "PLAY PLAY!" << std::endl;
   this->worldControlPub->Publish(worldControlMsg);  
 }
 

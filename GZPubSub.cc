@@ -126,7 +126,7 @@ void GZPubSub::Play(const FunctionCallbackInfo<Value>& args)
 
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   obj->gazebo->Pause();
-  
+std::cout << "PLAY PLAY PLAY!!! hourray" << std::endl;  
   args.GetReturnValue().SetUndefined();
 }
 
