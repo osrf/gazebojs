@@ -73,6 +73,7 @@ void GZPubSub::Init(Handle<Object> exports)
 
   // Prototype
   NODE_SET_PROTOTYPE_METHOD(tp1, "unsubscribe", Unsubscribe);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "subscribe", Subscribe);
   NODE_SET_PROTOTYPE_METHOD(tp1, "subscriptions", Subscriptions);
   NODE_SET_PROTOTYPE_METHOD(tp1, "publish", Publish);
   NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
@@ -114,8 +115,8 @@ void GZPubSub::Pause(const FunctionCallbackInfo<Value>& args)
 
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   obj->gazebo->Pause();
-  
-  args.GetReturnValue().SetUndefined();	
+
+  args.GetReturnValue().SetUndefined();
 }
 
 
@@ -125,8 +126,7 @@ void GZPubSub::Play(const FunctionCallbackInfo<Value>& args)
   HandleScope scope(args.GetIsolate());
 
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-  obj->gazebo->Pause();
-std::cout << "PLAY PLAY PLAY!!! hourray" << std::endl;  
+  obj->gazebo->Play();
   args.GetReturnValue().SetUndefined();
 }
 
@@ -138,7 +138,7 @@ void GZPubSub::ModelFile(const FunctionCallbackInfo<Value>& args)
   if ( args.Length() != 1 )
   {
     args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(), 
+        v8::String::NewFromUtf8(args.GetIsolate(),
 	"Wrong number of arguments. 1 expected"));
     return;
   }
@@ -146,7 +146,7 @@ void GZPubSub::ModelFile(const FunctionCallbackInfo<Value>& args)
   if (!args[0]->IsString())
   {
      args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(), 
+        v8::String::NewFromUtf8(args.GetIsolate(),
 	"Wrong argument type. Uri String model name expected."));
     return;
   }
@@ -253,7 +253,7 @@ void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
     if ((unsigned int)args.Length() > argIndex)
     {
       if (!args[argIndex]->IsNumber())
-      { 
+      {
         std::string msg = "Wrong argument type. Number expected for argument ";
 	msg += std::to_string(argIndex + 1);
 	msg += ".";
@@ -331,8 +331,8 @@ void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
      args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(),
         "Wrong argument type. Type String expected as first argument."));
-     return; 
-  } 
+     return;
+  }
 
   if (!args[1]->IsString())
   {
@@ -340,10 +340,10 @@ void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
       v8::String::NewFromUtf8(args.GetIsolate(),
       "Wrong argument type. Topic String expected as second argument."));
     return;
-  } 
+  }
 
   if (!args[2]->IsFunction())
-  {     
+  {
     args.GetIsolate()->ThrowException(
       v8::String::NewFromUtf8(args.GetIsolate(),
       "Wrong argument type. Function  expected as third argument."));
@@ -370,7 +370,7 @@ void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
   // javascript callback function is in position [2]
   v8::Handle<v8::Function> arg2 = v8::Handle<v8::Function>::Cast(args[2]);
   v8::Persistent<v8::Function> cb(args.GetIsolate(), arg2);
-  
+
   try
   {
     GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
@@ -523,12 +523,12 @@ void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
   const unsigned argc = 2;
   JsCallbackData* p = (JsCallbackData*)_handle->data;
   v8::Handle<v8::Value> argv[argc] = {
-    v8::Null(isolate),    
+    v8::Null(isolate),
     v8::String::NewFromUtf8(isolate, p->pbData.c_str())
   };
   // errors?
   // todo
-  // exceptions? 
+  // exceptions?
   v8::TryCatch try_catch;
 
 //  (*p->func)->Call(v8::Context::GetCurrent()->Global(), argc, argv);
@@ -538,7 +538,7 @@ void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
   // free data
   callback.Reset();
   delete p;
-  
+
   if (try_catch.HasCaught()) {
     node::FatalException(isolate, try_catch);
   }
@@ -548,13 +548,22 @@ void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
 /////////////////////////////////////////////////
 void  GazeboJsSubscriber::Callback(const char *_msg)
 {
+std::cout << "GazeboJsSubscriber::Callback\n";
+std::cout << "  MSG" << _msg << "\n";
+
   Isolate * isolate = Isolate::GetCurrent();
+std::cout << "isolate: " << isolate << "\n";
   JsCallbackData* p = new JsCallbackData();
+std::cout << "reset...\n";
   p->func.Reset(isolate, this->function);
+std::cout << "1\n";
   p->pbData = _msg;
+std::cout << "1\n";
   //  fprintf(stderr, "receiving message (thread::%d) ->\n", thread_id());
   this->handle->data = (void *)p;
+std::cout << "1\n";
   uv_async_send(handle);
+std::cout << "1\n";
 }
 
 

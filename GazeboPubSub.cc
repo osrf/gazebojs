@@ -36,7 +36,7 @@ static bool trace = false;
 void Trace(const char *m)
 {
   if(trace) cout << "[GazeboPubSub] "  << m << endl;
-  
+
 }
 
 /////////////////////////////////////////////////
@@ -68,7 +68,7 @@ void GzPublisher::Publish(const char *msg)
    // create a protobuf message
    boost::shared_ptr<google::protobuf::Message> pb = gazebo::msgs::MsgFactory::NewMsg(this->type);
    // fill it with json data
-   json2pb(*pb, msg, strlen(msg) ); 
+   json2pb(*pb, msg, strlen(msg) );
    // publish it
    this->pub->Publish( *(pb.get()) );
    // pb auto cleans up
@@ -90,7 +90,7 @@ GzSubscriber::GzSubscriber(gazebo::transport::NodePtr &_node, const char* _type,
 void GzSubscriber::GzCallback(const string &_msg)
 {
   Trace("GzCallback");
-  // make an empty protobuf 
+  // make an empty protobuf
   boost::shared_ptr<google::protobuf::Message> pb = gazebo::msgs::MsgFactory::NewMsg(this->type);
   // load it with the gazebo data
   pb->ParseFromString(_msg);
@@ -128,7 +128,7 @@ void GazeboPubSub::Pause()
 {
   gazebo::msgs::WorldControl worldControlMsg;
   worldControlMsg.set_pause(1);
-  this->worldControlPub->Publish(worldControlMsg);  
+  this->worldControlPub->Publish(worldControlMsg);
 }
 
 /////////////////////////////////////////////////
@@ -136,8 +136,7 @@ void GazeboPubSub::Play()
 {
   gazebo::msgs::WorldControl worldControlMsg;
   worldControlMsg.set_pause(0);
-  std::cout << "PLAY PLAY!" << std::endl;
-  this->worldControlPub->Publish(worldControlMsg);  
+  this->worldControlPub->Publish(worldControlMsg);
 }
 
 
