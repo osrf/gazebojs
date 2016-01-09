@@ -18,6 +18,8 @@
 #ifndef _GZPUBSUB_HH_
 #define _GZPUBSUB_HH_
 
+#include <v8.h>
+#include <uv.h>
 #include <node.h>
 #include <node_object_wrap.h>
 
@@ -30,7 +32,15 @@ namespace gzscript
 
   // inter thread communication data
   class JsCallbackData {
-    public: v8::Persistent<v8::Function> func;
+
+    public: JsCallbackData(v8::Persistent<v8::Function> &_func,
+                           const std::string& _pbData);
+
+    /// \brief The function callback
+    public: v8::Persistent<v8::Function> &func;
+
+    /// \brief This is the callback data (the topic message)
+    /// in a string format (not a protobuf yet)
     public: std::string pbData;
   };
 
@@ -38,10 +48,10 @@ namespace gzscript
   class GazeboJsSubscriber: public GzSubscriber
   {
     public: GazeboJsSubscriber(gazebo::transport::NodePtr &_node,
-                               v8::Persistent<v8::Function>& function,
-                               const char* type,
-                               const char* topic,
-                               bool latch);
+                      const v8::FunctionCallbackInfo<v8::Value>& _args,
+                      const char* _type,
+                      const char* _topic,
+                      bool _latch);
 
     public: virtual ~GazeboJsSubscriber();
 
@@ -53,12 +63,15 @@ namespace gzscript
 
     private: uv_async_t*  handle;
 
-    private: v8::Persistent<v8::Function>  function;
+    private: v8::Persistent<v8::Function> function;
   };
 
   class GazeboJsPubSub : public GazeboPubSub
   {
-    public: void  Subscribe(v8::Persistent<v8::Function>& function, const char* type, const char* topic, bool latch);
+    public: void  Subscribe(const v8::FunctionCallbackInfo<v8::Value>& args,
+                            const char* type,
+                            const char* topic,
+                            bool latch);
   };
 
   class GZPubSub : public node::ObjectWrap
@@ -70,7 +83,7 @@ namespace gzscript
     private: ~GZPubSub();
 
     // private: static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    private: static void New(const v8::FunctionCallbackInfo<v8::Value>& args);   
+    private: static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     private: static void Subscribe(const v8::FunctionCallbackInfo<v8::Value>& args);
 
@@ -88,7 +101,7 @@ namespace gzscript
     private: static void Play(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     private: static void  Spawn(const v8::FunctionCallbackInfo<v8::Value>& args);
-    
+
     /// \brief Get a model's sdf file
     private: static void ModelFile(const v8::FunctionCallbackInfo<v8::Value>& args);
 
@@ -97,7 +110,7 @@ namespace gzscript
 
     private: static void FindFile(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static v8::Persistent<v8::Function> constructor;    
+    private: static v8::Persistent<v8::Function> constructor;
 
     private: GazeboJsPubSub* gazebo;
 

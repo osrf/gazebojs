@@ -20,9 +20,6 @@
 
 #include <v8.h>
 #include <uv.h>
-//#include <unistd.h>
-//#include <sys/syscall.h>
-
 
 ///////////////
 #include <list>
@@ -367,14 +364,10 @@ void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
   std::string type(*sarg0);
   String::Utf8Value sarg1(args[1]->ToString());
   std::string topic(*sarg1);
-  // javascript callback function is in position [2]
-  v8::Handle<v8::Function> arg2 = v8::Handle<v8::Function>::Cast(args[2]);
-  v8::Persistent<v8::Function> cb(args.GetIsolate(), arg2);
-
   try
   {
     GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-    obj->gazebo->Subscribe(cb, type.c_str(), topic.c_str(), latch);
+    obj->gazebo->Subscribe(args, type.c_str(), topic.c_str(), latch);
   }
   catch(PubSubException &x)
   {
@@ -481,22 +474,32 @@ void GZPubSub::Publish(const FunctionCallbackInfo<Value>& args)
 }
 
 /////////////////////////////////////////////////
-void GazeboJsPubSub::Subscribe(v8::Persistent<v8::Function>& _function, const char* _type, const char* _topic, bool _latch)
+void GazeboJsPubSub::Subscribe(const FunctionCallbackInfo<Value>& _args,
+                               const char* _type,
+                               const char* _topic,
+                               bool _latch)
 {
-  Subscriber *sub = new GazeboJsSubscriber(this->node, _function, _type, _topic, _latch);
+  Subscriber *sub = new GazeboJsSubscriber(this->node, _args, _type, _topic, _latch);
   this->AddSubscriber(sub);
 }
 
 /////////////////////////////////////////////////
-GazeboJsSubscriber::GazeboJsSubscriber(gazebo::transport::NodePtr &_node, v8::Persistent<v8::Function>& _function,  const char* _type, const char* _topic, bool _latch)
+GazeboJsSubscriber::GazeboJsSubscriber(gazebo::transport::NodePtr &_node,
+                                       const FunctionCallbackInfo<Value>& args,
+                                       const char* _type,
+                                       const char* _topic,
+                                       bool _latch)
   :GzSubscriber(_node, _type, _topic, _latch)
 {
-  Isolate * isolate = Isolate::GetCurrent();
-  this->function.Reset(isolate, _function);
+  Isolate *isolate = args.GetIsolate();
+  Local<Function> local = Local<Function>::Cast(args[2].As<v8::Function>());
+  this->function.Reset(isolate, local);
+
   // setup the inter thread notification handle (from the main script engine thread)
   this->handle = (uv_async_t*)malloc(sizeof(uv_async_t));
   uv_async_cb cb = (uv_async_cb)GazeboJsSubscriber::doCallback;
   uv_async_init(uv_default_loop(), this->handle, cb);
+
 }
 
 
@@ -522,21 +525,16 @@ void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
   v8::HandleScope scope(isolate);
   const unsigned argc = 2;
   JsCallbackData* p = (JsCallbackData*)_handle->data;
+
   v8::Handle<v8::Value> argv[argc] = {
     v8::Null(isolate),
     v8::String::NewFromUtf8(isolate, p->pbData.c_str())
   };
-  // errors?
-  // todo
-  // exceptions?
+
   v8::TryCatch try_catch;
 
-//  (*p->func)->Call(v8::Context::GetCurrent()->Global(), argc, argv);
-
-  v8::Persistent<v8::Function> &callback = p->func;
-  Local<Function>::New(isolate, callback)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
-  // free data
-  callback.Reset();
+  v8::Local<v8::Function> localCallback = v8::Local<v8::Function>::New(isolate, p->func);
+  localCallback->Call(isolate->GetCurrentContext()->Global(), argc, argv);
   delete p;
 
   if (try_catch.HasCaught()) {
@@ -545,27 +543,23 @@ void GazeboJsSubscriber::doCallback(uv_async_t* _handle, int _status)
 }
 
 
-/////////////////////////////////////////////////
-void  GazeboJsSubscriber::Callback(const char *_msg)
+JsCallbackData::JsCallbackData(v8::Persistent<v8::Function> &_func,
+                           const std::string& _pbData)
+ :func(_func), pbData(_pbData)
 {
-std::cout << "GazeboJsSubscriber::Callback\n";
-std::cout << "  MSG" << _msg << "\n";
-
-  Isolate * isolate = Isolate::GetCurrent();
-std::cout << "isolate: " << isolate << "\n";
-  JsCallbackData* p = new JsCallbackData();
-std::cout << "reset...\n";
-  p->func.Reset(isolate, this->function);
-std::cout << "1\n";
-  p->pbData = _msg;
-std::cout << "1\n";
-  //  fprintf(stderr, "receiving message (thread::%d) ->\n", thread_id());
-  this->handle->data = (void *)p;
-std::cout << "1\n";
-  uv_async_send(handle);
-std::cout << "1\n";
 }
 
+/////////////////////////////////////////////////
+// this is called from the callback thread, and
+// not a javascript thread
+void  GazeboJsSubscriber::Callback(const char *_msg)
+{
+  JsCallbackData* p = new JsCallbackData(this->function, _msg);
+  p->pbData = _msg;
+  this->handle->data = (void *)p;
+  // this should signal the script thread that the work is done
+  uv_async_send(handle);
+}
 
 /////////////////////////////////////////////////
 NODE_MODULE(gazebo, InitAll)
