@@ -82,7 +82,6 @@ namespace gzscript
 
     private: ~GZPubSub();
 
-    // private: static v8::Handle<v8::Value> New(const v8::Arguments& args);
     private: static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     private: static void Subscribe(const v8::FunctionCallbackInfo<v8::Value>& args);
