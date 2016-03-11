@@ -23,7 +23,8 @@
     "node": ">= 0.12.0"
   },
   "dependencies": {
+    "jimp": "^0.2.21",
     "mocha": "^1.21.4",
-    "node-gyp": "~1.0.1"
+    "node-gyp": "~1.0.1",
   }
 }

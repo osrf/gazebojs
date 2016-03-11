@@ -2,15 +2,18 @@
 
 
 // to complie in debug mode, use
-// node-gyp configure --debug 
+// node-gyp configure --debug
 // and select the module in the debug dir:
 // var gz = require('./build/Debug/gazebo');
 
 var gz = require('./build/Release/gazebo');
 
+// var Png = require('/home/hugo/dev/node-png').Png;
+var Png = require('pngjs').Png;
+
 var fs = require('fs');
 // var Png = require('png').Png;
-// var Jpeg = require('jpeg').Jpeg; 
+// var Jpeg = require('jpeg').Jpeg;
 var path = require('path');
 var util = require('util');
 
@@ -30,7 +33,7 @@ PosesFilter.prototype.hasMoved = function(oldPosition, position, dist)
     var x = oldPosition.x - position.x;
     var y = oldPosition.y - position.y;
     var z = oldPosition.z - position.z;
-    var translation2 = x*x + y*y + z*z 
+    var translation2 = x*x + y*y + z*z
     return translation2 > (dist * dist);
 }
 
@@ -51,7 +54,7 @@ PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
     var age = ds * 1e9 + dn;
     var old =  age >  nsecs;
     return old;
-} 
+}
 
 PosesFilter.prototype.reset = function(options) {
     this.poseMap = {};
@@ -85,17 +88,17 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
         var pose = posesStamped.pose[i];
         var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
         var model = pose.id;
-    
+
         var lastMsg = this.poseMap[model];
         var filtered = true;
-        
+
         if (lastMsg) {
             var old = this.isOld(lastMsg.time, newMsg.time, nsec);
             var far = this.hasMoved(lastMsg.position, newMsg.position, this.distance);
             var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion);
             // console.log(pose.name + ' old: ' + old + ' far:' + far + ' twist:' + twisted);
             if(old || far || twisted) {
-                filtered = false;   
+                filtered = false;
             }
         }
         if (!lastMsg || !filtered) {
@@ -112,7 +115,7 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
 PosesFilter.prototype.stats = function() {
     var p = 100 * (this.msgCount / this.filteredCount);
     console.log( 'messag compression:'+ p + '% (' + this.msgCount + ' total)' );
-}   
+}
 
 
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
@@ -160,9 +163,9 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
 
 
 Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
-    
-    var format = 'jpeg';
-    var encoding = 'binary';
+
+    var format = 'jpeg'
+    var quality = 50
 
     if(options) {
         if (options['format'])
@@ -173,9 +176,10 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
         else {
             format = options['format'];
         }
-        if (options['encoding']) {
-            if (!options['encoding'] in ['base64', 'binary'])
-                throw "Encoding not supported. Choices are: binary (default) or base64"
+        if (options['quality']) {
+            quality = options['quality']
+            if (options['format'] != ['jpeg'])
+                console.log("Quality only applies to jpeg encoding. It will be ignored.")
         }
     }
     var type = 'gazebo.msgs.ImageStamped';
@@ -185,43 +189,48 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             cb(err);
         }
         else {
-            var image = image_msg.image;
+            var image = image_msg.image
+
+            console.log('SOMEHTEI ' + image.data[0])
+            // console.log('image h:', image.height)
             var rgb = new Buffer(image.data, 'base64');
+            // cb(null, rgb, image.width, image.height)
+            // return;
+
             if(format == 'jpeg') {
                 cb ("jpeg support is missing!");
-return;
-var Jpeg = require('jpeg').Jpeg; 
-
+                return;
+/*
+                var Jpeg = require('jpeg').Jpeg;
                 var jpeg = new Jpeg(rgb, image.width, image.height);
                 jpeg.encode(function (img, error) {
                     if(error) {
                         cb(error);
                     } else {
                         var data = img.toString(encoding); // base64
-                        
+
                         cb(null, data);
                     }
                 });
+*/
             }
-            if(format =='png') {   
-              cb("jpeg support is missing!");
-              return;
-var Png = require('png').Png;
+            if(format =='png') {
                 var png = new Png(rgb, image.width, image.height);
                 png.encode(function (img, error) {
                      if(error) {
                          cb(error);
                      } else {
-                         // var data = jpeg_img.toString(encoding); // base64
-                         cb(null, img);
+                         var data = jpeg_img.toString(encoding); // base64
+                         cb(null, data);
                      }
                  });
             }
+
         }
     });
 }
 
-Gazebo.prototype.pixel_format = function (nb) {
+exports.pixel_format = function (nb) {
     return gz_formats[nb];
 }
 
@@ -282,7 +291,7 @@ exports.connect = function (options ) {
 // test for subscribe
 // var gazebo = new ( require('./index')).Gazebo(); var m = []; gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){m.push(d)});
 
-// test for g.subscribeToImageTopic 
+// test for g.subscribeToImageTopic
 // var gz = require('gazebojs'); var fs = require('fs'); var g = new gz.Gazebo();
 // var img=[]; g.subscribeToImageTopic('~/camera/link/camera/image', function(e, i){img = i ;})
 
