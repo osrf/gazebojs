@@ -8,8 +8,7 @@
 
 var gz = require('./build/Release/gazebo');
 
-// var Png = require('/home/hugo/dev/node-png').Png;
-var Png = require('pngjs').Png;
+var Jimp = require('jimp');
 
 var fs = require('fs');
 // var Png = require('png').Png;
@@ -170,7 +169,7 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
     if(options) {
         if (options['format'])
         {
-            if (!options['format'] in ['png', 'jpeg'])
+            if (!options['format'] in ['png', 'jpeg', 'bmp'])
                 throw "Format not supported. Choices are: jpeg (default) or png";
         }
         else {
@@ -193,39 +192,44 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
 
             console.log('SOMEHTEI ' + image.data[0])
             // console.log('image h:', image.height)
-            var rgb = new Buffer(image.data, 'base64');
+            var buffer = new Buffer(image.data, 'base64');
             // cb(null, rgb, image.width, image.height)
             // return;
-
-            if(format == 'jpeg') {
-                cb ("jpeg support is missing!");
-                return;
-/*
-                var Jpeg = require('jpeg').Jpeg;
-                var jpeg = new Jpeg(rgb, image.width, image.height);
-                jpeg.encode(function (img, error) {
-                    if(error) {
-                        cb(error);
-                    } else {
-                        var data = img.toString(encoding); // base64
-
-                        cb(null, data);
-                    }
-                });
-*/
+            var rgbaBuffer = new Buffer(image_msg.image.width, image_msg.image.height * 4)
+            var j=0
+            var i=0
+            while(i < rgbaBuffer.length){
+              rgbaBuffer[i++] = buffer[j++]
+              rgbaBuffer[i++] = buffer[j++]
+              rgbaBuffer[i++] = buffer[j++]
+              rgbaBuffer[i++] = 255 // alpha
             }
-            if(format =='png') {
-                var png = new Png(rgb, image.width, image.height);
-                png.encode(function (img, error) {
-                     if(error) {
-                         cb(error);
-                     } else {
-                         var data = jpeg_img.toString(encoding); // base64
-                         cb(null, data);
-                     }
-                 });
-            }
-
+            var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+              image.bitmap.data = rgbaBuffer
+              // image.write( 'jimp.jpg', console.log );
+              // image.write( 'jimp.png', console.log );
+              var data;
+              if(format == 'jpeg'){
+                image.quality(quality)
+                image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
+                  data = fileBuf
+                  fs.writeFile('jimp.jpg', fileBuf, console.log)
+                })
+              }
+              if(format == 'png')
+                image.getBuffer(Jimp.MIME_PNG, function(err, fileBuf) {
+                  data = fileBuf
+                  fs.writeFile('jimp.png', fileBuf, console.log)
+                })
+              if(format == 'bmp')
+                image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
+                  data = fileBuf
+                  fs.writeFile('jimp.bmp', fileBuf, console.log)
+                })
+              if(!fileBuf)
+                cb("Error writing data")
+              cb( null, fileBuf)
+          });
         }
     });
 }
