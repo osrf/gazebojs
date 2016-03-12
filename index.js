@@ -188,11 +188,10 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             cb(err);
         }
         else {
-            var image = image_msg.image
 
-            console.log('SOMEHTEI ' + image.data[0])
+            // console.log('SOMEHTEI ' + image.data[0])
             // console.log('image h:', image.height)
-            var buffer = new Buffer(image.data, 'base64');
+            var buffer = new Buffer(image_msg.image.data, 'base64');
             // cb(null, rgb, image.width, image.height)
             // return;
             var rgbaBuffer = new Buffer(image_msg.image.width, image_msg.image.height * 4)
@@ -212,23 +211,22 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
               if(format == 'jpeg'){
                 image.quality(quality)
                 image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
-                  data = fileBuf
-                  fs.writeFile('jimp.jpg', fileBuf, console.log)
+                  // fs.writeFile('jimp.jpg', fileBuf, console.log)
+                  cb(err, fileBuf)
                 })
               }
               if(format == 'png')
                 image.getBuffer(Jimp.MIME_PNG, function(err, fileBuf) {
-                  data = fileBuf
-                  fs.writeFile('jimp.png', fileBuf, console.log)
+
+                  cb(err, fileBuf)
+                  // fs.writeFile('jimp.png', fileBuf, console.log)
                 })
               if(format == 'bmp')
                 image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
-                  data = fileBuf
-                  fs.writeFile('jimp.bmp', fileBuf, console.log)
+                  cb(err, fileBuf)
+                  // fs.writeFile('jimp.bmp', fileBuf, console.log)
                 })
-              if(!fileBuf)
-                cb("Error writing data")
-              cb( null, fileBuf)
+              cb('unsupported format: ' + format);
           });
         }
     });
