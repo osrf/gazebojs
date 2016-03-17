@@ -1,4 +1,4 @@
-
+'use strict'
 
 
 // to complie in debug mode, use
@@ -6,9 +6,11 @@
 // and select the module in the debug dir:
 // var gz = require('./build/Debug/gazebo');
 
-var gz = require('./build/Release/gazebo');
+let gz = require('./build/Release/gazebo');
 
-var Jimp = require('jimp');
+let Jimp = require('jimp');
+let PNG = require('pngjs').PNG
+let streamToBuffer = require('stream-to-buffer')
 
 var fs = require('fs');
 // var Png = require('png').Png;
@@ -113,7 +115,7 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
 
 PosesFilter.prototype.stats = function() {
     var p = 100 * (this.msgCount / this.filteredCount);
-    console.log( 'messag compression:'+ p + '% (' + this.msgCount + ' total)' );
+    console.log( 'message compression:'+ p + '% (' + this.msgCount + ' total)' );
 }
 
 
@@ -170,10 +172,7 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
         if (options['format'])
         {
             if (!options['format'] in ['png', 'jpeg', 'bmp'])
-                throw "Format not supported. Choices are: jpeg (default) or png";
-        }
-        else {
-            format = options['format'];
+                throw "Format not supported. Choices are: jpeg (default), bmp or png";
         }
         if (options['quality']) {
             quality = options['quality']
@@ -181,52 +180,59 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
                 console.log("Quality only applies to jpeg encoding. It will be ignored.")
         }
     }
+
+    format = options['format'];
     var type = 'gazebo.msgs.ImageStamped';
     this.subscribe(type, topic, function(err, image_msg) {
-
         if (err) {
             cb(err);
         }
         else {
+          var buffer = new Buffer(image_msg.image.data, 'base64');
+          if(format == 'png') {
+            var png = new PNG({
+              width: image_msg.image.width,
+              height: image_msg.image.height,
+              bitDepth: 8,
+              colorType: 6,
+              inputHasAlpha: false
+            });
+            png.data = buffer
 
-            // console.log('SOMEHTEI ' + image.data[0])
-            // console.log('image h:', image.height)
-            var buffer = new Buffer(image_msg.image.data, 'base64');
-            // cb(null, rgb, image.width, image.height)
-            // return;
-            var rgbaBuffer = new Buffer(image_msg.image.width, image_msg.image.height * 4)
-            var j=0
-            var i=0
-            while(i < rgbaBuffer.length){
-              rgbaBuffer[i++] = buffer[j++]
-              rgbaBuffer[i++] = buffer[j++]
-              rgbaBuffer[i++] = buffer[j++]
-              rgbaBuffer[i++] = 255 // alpha
+            streamToBuffer(png.pack(), function (err, fileBuf) {
+              cb(null, fileBuf)
+            })
+            return
+          }
+          // make a larger buffer for transparent layer
+          var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
+          var j=0
+          var i=0
+          //var pixData = image_msg.image.data
+          var pixData = buffer
+          while(i < rgbaBuffer.length){
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = 255 // alpha
+          }
+          var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+            image.bitmap.data = rgbaBuffer
+            // image.write( 'jimp.jpg', console.log );
+            // image.write( 'jimp.png', console.log );
+            var datai;
+            if(format == 'jpeg') {
+              image.quality(quality)
+              image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
+                // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
+                cb(err, fileBuf)
+              })
             }
-            var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
-              image.bitmap.data = rgbaBuffer
-              // image.write( 'jimp.jpg', console.log );
-              // image.write( 'jimp.png', console.log );
-              var data;
-              if(format == 'jpeg'){
-                image.quality(quality)
-                image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
-                  // fs.writeFile('jimp.jpg', fileBuf, console.log)
-                  cb(err, fileBuf)
-                })
-              }
-              if(format == 'png')
-                image.getBuffer(Jimp.MIME_PNG, function(err, fileBuf) {
-
-                  cb(err, fileBuf)
-                  // fs.writeFile('jimp.png', fileBuf, console.log)
-                })
-              if(format == 'bmp')
-                image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
-                  cb(err, fileBuf)
-                  // fs.writeFile('jimp.bmp', fileBuf, console.log)
-                })
-              cb('unsupported format: ' + format);
+            if(format == 'bmp') {
+              image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
+                cb(err, fileBuf)
+              })
+            }
           });
         }
     });
@@ -235,6 +241,8 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
 exports.pixel_format = function (nb) {
     return gz_formats[nb];
 }
+
+
 
 
 Gazebo.prototype.unsubscribe = function(topic) {
@@ -247,6 +255,8 @@ Gazebo.prototype.publish = function (type, topic, msg, options) {
 }
 
 Gazebo.prototype.model = function(model_name, cb) {
+    if(!cb)
+       throw("No callback function specified to get sdf for: " + model_name)
     var modelFile = this.sim.modelFile(model_name);
     fs.readFile(modelFile, function(err, data){
         if(err){
