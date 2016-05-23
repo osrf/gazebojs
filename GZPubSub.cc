@@ -136,7 +136,7 @@ void GZPubSub::ModelFile(const FunctionCallbackInfo<Value>& args)
   {
     args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(),
-	"Wrong number of arguments. 1 expected"));
+        "Wrong number of arguments. 1 expected"));
     return;
   }
 
@@ -144,7 +144,7 @@ void GZPubSub::ModelFile(const FunctionCallbackInfo<Value>& args)
   {
      args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(),
-	"Wrong argument type. Uri String model name expected."));
+        "Wrong argument type. Uri String model name expected."));
     return;
   }
 
@@ -221,7 +221,7 @@ void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
   {
      args.GetIsolate()->ThrowException(
         v8::String::NewFromUtf8(args.GetIsolate(),
-        "Wrong number of arguments. 1 expected"));
+        "Wrong number of arguments. type, name and optional pose expected"));
     return;
   }
 
@@ -252,8 +252,8 @@ void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
       if (!args[argIndex]->IsNumber())
       {
         std::string msg = "Wrong argument type. Number expected for argument ";
-	msg += std::to_string(argIndex + 1);
-	msg += ".";
+        msg += std::to_string(argIndex + 1);
+        msg += ".";
         args.GetIsolate()->ThrowException(
           v8::String::NewFromUtf8(args.GetIsolate(), msg.c_str()));
         return;
@@ -269,7 +269,7 @@ void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
 
   obj->gazebo->SpawnModel(type.c_str(),
-			  name.c_str(),
+                          name.c_str(),
                           pose[0],
                           pose[1],
                           pose[2],
