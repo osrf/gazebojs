@@ -138,6 +138,15 @@ Gazebo.prototype.play = function() {
     this.sim.play();
 }
 
+// Spawns a new model instance in the simulation .
+// Arguments:
+//   type: the model type uri (ex: "model://camera")
+//   name: the model name
+//   x, y, z, rx, ry, rz: the pose of the model
+Gazebo.prototype.spawn = function (args) {
+  // send all args to this.sim
+  this.sim.spawn.apply(this.sim, arguments)
+}
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
