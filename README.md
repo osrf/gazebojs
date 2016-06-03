@@ -18,4 +18,3 @@ Running the tests
 
 npm test
 
-
