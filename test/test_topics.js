@@ -27,6 +27,7 @@ suite('topics', function() {
   // this->poseTopic = "~/pose/info";
   // this->lightFactoryTopic = "~/factory/light";
   // this->lightModifyTopic = "~/light/modify";
+
   var gzserver;
   var gazebo;
 
