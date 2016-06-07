@@ -5,8 +5,6 @@ gazebojs = require('../index');
 
 suite('topics', function() {
 
-  //gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){console.log(d.pose[2].orientation);gazebo.unsubscribe('~/pose/info');});
-  sensor_uri = 'model://hokuyo'
   var gzserver;
   var gazebo;
 
@@ -26,7 +24,6 @@ suite('topics', function() {
             done();
         }, 100);
     });
-
 // Test receiving pose msgs.
 test('Pose topic', function(done) {
     first = true;
