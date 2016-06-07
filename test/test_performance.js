@@ -11,9 +11,11 @@ var pioneer2dx_uri = 'model://pioneer2dx';
 
 suite('topics', function() {
 
-// This test is to see how faast caan we process msgs from a topic.
+// This test is to see how fast can we process msgs from a topic.
 // This would be a key to replace gzbridge by gazebojs, if the performaance
 // turns out to be not good we wont be aable to do it then.
+
+// Do i need advertise ?, it would allow me to set the frequency of publishing msgs.
 
   var gzserver;
   var gazebo;
