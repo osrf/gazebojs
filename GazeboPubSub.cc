@@ -140,7 +140,7 @@ void GazeboPubSub::Play()
 }
 
 /////////////////////////////////////////////////
-void GazeboPubSub::DeleteModel(const char* _name)
+void GazeboPubSub::DeleteEntity(const char* _name)
 {
   gazebo::msgs::Request *msg = gazebo::msgs::CreateRequest("entity_delete", _name);
   this->requestPub->Publish(*msg);

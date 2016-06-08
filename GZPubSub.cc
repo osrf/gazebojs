@@ -76,7 +76,7 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
   NODE_SET_PROTOTYPE_METHOD(tp1, "pause", Pause);
   NODE_SET_PROTOTYPE_METHOD(tp1, "play", Play);
-  NODE_SET_PROTOTYPE_METHOD(tp1, "deleteModel", DeleteModel);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "deleteEntity", DeleteEntity);
   NODE_SET_PROTOTYPE_METHOD(tp1, "spawn", Spawn);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
@@ -212,7 +212,7 @@ void GZPubSub::FindFile(const FunctionCallbackInfo<Value>& args)
 }
 
 /////////////////////////////////////////////////
-void GZPubSub::DeleteModel(const FunctionCallbackInfo<Value>& args)
+void GZPubSub::DeleteEntity(const FunctionCallbackInfo<Value>& args)
 {
   HandleScope scope(args.GetIsolate());
 
@@ -229,7 +229,7 @@ void GZPubSub::DeleteModel(const FunctionCallbackInfo<Value>& args)
   try
   {
     GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-    obj->gazebo->DeleteModel(name.c_str());
+    obj->gazebo->DeleteEntity(name.c_str());
   }
   catch(PubSubException &x)
   {

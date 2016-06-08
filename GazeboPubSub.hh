@@ -66,7 +66,7 @@ namespace gzscript
 
     public: void Play();
 
-    public: void DeleteModel(const char* _name);
+    public: void DeleteEntity(const char* _name);
 
     public: void SpawnModel(const char *_type,
                          const char *_name,
