@@ -3,7 +3,7 @@ util = require('util'),
 spawn = require('child_process').spawn;
 gazebojs = require('../index');
 
-suite('topics', function() {
+suite('movement', function() {
 
   var gzserver;
   var gazebo;
@@ -12,7 +12,6 @@ suite('topics', function() {
 
   suiteSetup (function(done){
 
-        // console.log('suiteSetup');
         gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
         console.log(__dirname);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
@@ -24,32 +23,33 @@ suite('topics', function() {
             done();
         }, 100);
     });
-// Test receiving pose msgs.
-test('Pose topic', function(done) {
-    first = true;
-    gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-        if(first){
-            old_orientation = d.pose[2].orientation;
-            console.log(old_orientation)
-        }
-        else{
-            new_orientation = d.pose[2].orientation;
-            console.log(new_orientation)
-            if(old_orientation!=new_orientation){
-                gazebo.unsubscribe('~/pose/info');
-                done();
+
+    // Test receiving pose msgs from a moving model.
+    test('receiving msgs from a moving model', function(done) {
+        first = true;
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            if(first){
+                old_orientation = d.pose[2].orientation;
+                console.log(old_orientation)
             }
             else{
-                gazebo.unsubscribe('~/pose/info');
+                new_orientation = d.pose[2].orientation;
+                console.log(new_orientation)
+                if(old_orientation!=new_orientation){
+                    gazebo.unsubscribe('~/pose/info');
+                    done();
+                }
+                else{
+                    gazebo.unsubscribe('~/pose/info');
+                }
             }
-        }
-        first = false;
+            first = false;
+        });
     });
-});
 
-suiteTeardown(function() {
-    console.log('suiteTeardown');
-    gzserver.kill('SIGHUP');
-});
+    suiteTeardown(function() {
+        console.log('suiteTeardown');
+        gzserver.kill('SIGHUP');
+    });
 
 });
