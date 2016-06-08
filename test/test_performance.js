@@ -44,6 +44,7 @@ suiteSetup (function(done){
                 gazebo.unsubscribe('~/pose/info');
                 // We would consider this a minimum rate for now, could be changed later.
                 if(rate < 50){
+                  assert.fail(rate,50,'msgs reciving rate too slow','<');
                   console.log('Too slow')
                 }
                 else{
