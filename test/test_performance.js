@@ -7,9 +7,7 @@ suite('performance', function() {
 
 // This test is to see how fast can we process msgs from a topic.
 // This would be a key to replace gzbridge by gazebojs, if the performance
-// turns out to be not good we wont be aable to do it then.
-
-// Do i need advertise ?, it would allow me to set the frequency of publishing msgs.
+// turns out to be not good we wont be able to do it then.
 
 var gzserver;
 var gazebo;
@@ -34,30 +32,30 @@ suiteSetup (function(done){
         }, 100);
     });
 
-// How fast can gazebojs process msgs from a certain topic.
-  test('Reciving msgs', function(done) {
-    first = true;
-    counter = 0;
-    gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-        counter ++;
-        setTimeout(()=> {
-          var rate = counter/test_period_sec;
-            console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
-            gazebo.unsubscribe('~/pose/info');
-// We would consider this a minimum raate for now, could be changed later.
-            if(rate < 50){
-              console.log('Too slow')
-            }
-            else{
-            done();
-            }            
-        }, test_period);
+    // How fast can gazebojs process msgs from a certain topic.
+    test('Reciving msgs', function(done) {
+        first = true;
+        counter = 0;
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+            setTimeout(()=> {
+              var rate = counter/test_period_sec;
+                console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
+                gazebo.unsubscribe('~/pose/info');
+                // We would consider this a minimum rate for now, could be changed later.
+                if(rate < 50){
+                  console.log('Too slow')
+                }
+                else{
+                done();
+                }            
+            }, test_period);
+        });
     });
-});
 
-  suiteTeardown(function() {
-    console.log('suiteTeardown');
-    gzserver.kill('SIGHUP');
-});
+      suiteTeardown(function() {
+        console.log('suiteTeardown');
+        gzserver.kill('SIGHUP');
+      });
 
 });
