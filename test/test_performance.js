@@ -14,6 +14,10 @@ suite('performance', function() {
 var gzserver;
 var gazebo;
 
+// This value shouldn't be greater than 4900, or the test will time out.
+var test_period = 4000;
+var test_period_sec = test_period /1000;
+
 this.timeout(5000);
 
 suiteSetup (function(done){
@@ -30,22 +34,24 @@ suiteSetup (function(done){
         }, 100);
     });
 
-  // This Warrning appears in gzserver after sth like 5 minutes of running: [Wrn] [Publisher.cc:140] 
-  // Queue limit reached for topic /gazebo/default/pose/local/info, deleting message. This warning is printed only once
-
-  // TODO: a read test has to be done, we are just counting the number of recieved msgs on the topin in a 4sec interval.
-  // How fast can gazebojs process msgs from a certain topic.
+// How fast can gazebojs process msgs from a certain topic.
   test('Reciving msgs', function(done) {
     first = true;
     counter = 0;
     gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
         counter ++;
         setTimeout(()=> {
-            console.log(counter)
+          var rate = counter/test_period_sec;
+            console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
             gazebo.unsubscribe('~/pose/info');
-  // We do need to add some sort of a condtion.
-            done();            
-        }, 4000);
+// We would consider this a minimum raate for now, could be changed later.
+            if(rate < 50){
+              console.log('Too slow')
+            }
+            else{
+            done();
+            }            
+        }, test_period);
     });
 });
 
