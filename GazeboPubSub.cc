@@ -139,6 +139,13 @@ void GazeboPubSub::Play()
   this->worldControlPub->Publish(worldControlMsg);
 }
 
+/////////////////////////////////////////////////
+void GazeboPubSub::DeleteModel(const char* _name)
+{
+  gazebo::msgs::Request *msg = gazebo::msgs::CreateRequest("entity_delete", _name);
+  this->requestPub->Publish(*msg);
+  delete msg;
+}
 
 /////////////////////////////////////////////////
 vector<string> GazeboPubSub::GetMaterials()
@@ -175,6 +182,11 @@ GazeboPubSub::GazeboPubSub()
   this->worldControlPub =
       this->node->Advertise<gazebo::msgs::WorldControl>(
       worldControlTopic);
+
+  // For controling world
+  this->requestPub =
+      this->node->Advertise<gazebo::msgs::Request>(
+      "~/request");
 
   // For spawning models
   this->factoryPub =

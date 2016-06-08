@@ -66,6 +66,8 @@ namespace gzscript
 
     public: void Play();
 
+    public: void DeleteModel(const char* _name);
+
     public: void SpawnModel(const char *_type,
                          const char *_name,
                          double x,
@@ -85,6 +87,9 @@ namespace gzscript
 
     /// \brief lots of spawn
     private: gazebo::transport::PublisherPtr factoryPub;
+
+    /// \Delete a model.
+    private: gazebo::transport::PublisherPtr requestPub;
 
     /// \brief Publish world control messages
     private: gazebo::transport::PublisherPtr worldControlPub;
