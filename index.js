@@ -142,8 +142,9 @@ Gazebo.prototype.play = function() {
 Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var latch = false;
     var toJson = true;
+    var type = 'gazebo.msgs.Request';
 
-    this.sim.publish('Request', '~/entity_delete', name, function(err, data) {
+    this.sim.publish('gazebo.msgs.Request', '~/entity_delete', {name:name}, function(err, data) {
         console.log(err)
         console.log(data)
         if(err){
@@ -176,7 +177,7 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         }
 
         var result = data;
-	    // parse the string into a json msg
+        // parse the string into a json msg
         if(toJson) {
             result = JSON.parse(data);
         }
