@@ -99,6 +99,7 @@ namespace gzscript
 
     private: static void Play(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+    /// \brief Deletes an Entity by name.
     private: static void DeleteEntity(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     private: static void  Spawn(const v8::FunctionCallbackInfo<v8::Value>& args);

@@ -66,6 +66,7 @@ namespace gzscript
 
     public: void Play();
 
+    /// \brief Deletes an Entity by name.
     public: void DeleteEntity(const char* _name);
 
     public: void SpawnModel(const char *_type,
