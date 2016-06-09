@@ -143,7 +143,7 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var latch = false;
     var toJson = true;
     var type = 'gazebo.msgs.Request';
-
+    var msg = gazebo.msgs.request
     this.sim.publish('gazebo.msgs.Request', '~/entity_delete', {name:name}, function(err, data) {
         console.log(err)
         console.log(data)
