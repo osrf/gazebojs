@@ -119,6 +119,26 @@ PosesFilter.prototype.stats = function() {
     console.log( 'message compression:'+ p + '% (' + this.msgCount + ' total)' );
 }
 
+
+var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
+   'RGBA_INT8', 'BGRA_INT8', 'RGB_INT16', 'RGB_INT32', 'BGR_INT8', 'BGR_INT16',
+   'BGR_INT32', 'R_FLOAT16', 'RGB_FLOAT16', 'R_FLOAT32', 'RGB_FLOAT32',
+   'BAYER_RGGB8','BAYER_RGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'];
+
+function Gazebo (options) {
+    this.sim = new gz.Sim();
+}
+
+exports.Gazebo = Gazebo;
+
+Gazebo.prototype.pause = function() {
+    this.sim.pause();
+}
+
+Gazebo.prototype.play = function() {
+    this.sim.play();
+}
+
 Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var latch = false;
     var toJson = true;
@@ -139,25 +159,6 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
         cb(err, result);
 
     }, latch);
-}
-
-var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
-'RGBA_INT8', 'BGRA_INT8', 'RGB_INT16', 'RGB_INT32', 'BGR_INT8', 'BGR_INT16',
-'BGR_INT32', 'R_FLOAT16', 'RGB_FLOAT16', 'R_FLOAT32', 'RGB_FLOAT32',
-'BAYER_RGGB8','BAYER_RGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'];
-
-function Gazebo (options) {
-    this.sim = new gz.Sim();
-}
-
-exports.Gazebo = Gazebo;
-
-Gazebo.prototype.pause = function() {
-    this.sim.pause();
-}
-
-Gazebo.prototype.play = function() {
-    this.sim.play();
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
@@ -217,14 +218,14 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
               bitDepth: 8,
               colorType: 6,
               inputHasAlpha: false
-          });
+            });
             png.data = buffer
 
             streamToBuffer(png.pack(), function (err, fileBuf) {
               cb(null, fileBuf)
-          })
+            })
             return
-        }
+          }
           // make a larger buffer for transparent layer
           var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
           var j=0
@@ -236,8 +237,8 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             rgbaBuffer[i++] = pixData[j++]
             rgbaBuffer[i++] = pixData[j++]
             rgbaBuffer[i++] = 255 // alpha
-        }
-        var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+          }
+          var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
             image.bitmap.data = rgbaBuffer
             // image.write( 'jimp.jpg', console.log );
             // image.write( 'jimp.png', console.log );
@@ -247,16 +248,16 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
               image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
                 // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
                 cb(err, fileBuf)
-            })
-          }
-          if(format == 'bmp') {
+              })
+            }
+            if(format == 'bmp') {
               image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
                 cb(err, fileBuf)
-            })
-          }
-      });
-    }
-});
+              })
+            }
+          });
+        }
+    });
 }
 
 exports.pixel_format = function (nb) {
@@ -277,14 +278,14 @@ Gazebo.prototype.publish = function (type, topic, msg, options) {
 
 Gazebo.prototype.model = function(model_name, cb) {
     if(!cb)
-     throw("No callback function specified to get sdf for: " + model_name)
- var modelFile = this.sim.modelFile(model_name);
- fs.readFile(modelFile, function(err, data){
-    if(err){
-        cb(err);
-    }
-    var str = '';
-    if(data){
+       throw("No callback function specified to get sdf for: " + model_name)
+    var modelFile = this.sim.modelFile(model_name);
+    fs.readFile(modelFile, function(err, data){
+        if(err){
+            cb(err);
+        }
+        var str = '';
+        if(data){
             // fs returns a Buffer, get a string instead
             str = data.toString('utf8');
         }
