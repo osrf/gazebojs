@@ -13,7 +13,6 @@ suite('movement', function() {
   suiteSetup (function(done){
 
         gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
-        console.log(__dirname);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
         setTimeout(()=> {
