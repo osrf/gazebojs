@@ -5,12 +5,13 @@ gazebojs = require('../index');
 
 suite('movement', function() {
 
-  var gzserver;
-  var gazebo;
+    var gzserver;
+    var gazebo;
 
-  this.timeout(5000);
+    this.timeout(5000);
 
-  suiteSetup (function(done){
+    suiteSetup (function(done){
+
 
         gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
