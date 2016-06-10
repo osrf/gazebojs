@@ -11,6 +11,7 @@ let gz = require('./build/Release/gazebo');
 let Jimp = require('jimp');
 let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
+var random = require("random-js")(); // uses the nativeMath engine
 
 var fs = require('fs');
 // var Png = require('png').Png;
@@ -122,7 +123,9 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var latch = false;
     var toJson = true;
     var type = 'gazebo.msgs.Request';
-    this.sim.publish('gazebo.msgs.Request', '~/entity_delete', {name:name}, function(err, data) {
+    var value = random.integer(1, 1000);
+    console.log('before publish call')
+    gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name}, function(err, data) {
         console.log(err)
         console.log(data)
         if(err){
