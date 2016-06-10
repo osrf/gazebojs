@@ -124,7 +124,6 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var toJson = true;
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
-    console.log('before publish call')
     gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name}, function(err, data) {
         console.log(err)
         console.log(data)
@@ -132,7 +131,6 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
             cb(err);
             return;
         }
-
         var result = data;
         // parse the string into a json msg
         if(toJson) {

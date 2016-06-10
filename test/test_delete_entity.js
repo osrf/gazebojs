@@ -26,21 +26,37 @@ suite('deletion', function() {
         }, 100);
     });
 
-// Test receiving Joint msgs on joint topic.
-test('Delete a model', function(done) {
-    gazebo.sim.spawn(model_uri, 'coke_can');
-    gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
-        console.log(d);
-        assert(d.response == 'success' && d.request == 'entity_delete');
-        gazebo.unsubscribe('~/response');
-        done();
+    // Test deletion of an entity.
+    test('Delete an entity from using gazebo prototype', function(done) {
+        gazebo.sim.spawn(model_uri, 'coke_can');
+        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
+            console.log(d);
+            assert(d.response === 'success' && d.request === 'entity_delete');
+            gazebo.unsubscribe('~/response');
+            done();
+        });
+        setTimeout(()=>{
+            gazebo.deleteEntity('coke_can');            
+        },200)
     });
-    gazebo.sim.deleteEntity('coke_can');
-});
 
-suiteTeardown(function() {
-    console.log('suiteTeardown');
-    gzserver.kill('SIGHUP');
-});
+    // Test deletion of an entity.
+    test('Delete a model', function(done) {
+        gazebo.sim.spawn('model://cube_20k', 'box');
+        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
+            console.log(d);
+            assert(d.response === 'success' && d.request === 'entity_delete');
+            gazebo.unsubscribe('~/response');
+            done();
+        });
+        setTimeout(()=>{
+            gazebo.sim.deleteEntity('box');            
+        },400)
+    });
+
+    suiteTeardown(function() {
+        console.log('suiteTeardown');
+        gzserver.kill('SIGHUP');
+    });
 
 });
