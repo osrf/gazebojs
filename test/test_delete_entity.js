@@ -5,7 +5,7 @@ gazebojs = require('../index');
 
 var model_uri = 'model://coke_can';
 
-suite('paths', function() {
+suite('deletion', function() {
 
     var gzserver;
     var gazebo;
