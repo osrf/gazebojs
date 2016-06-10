@@ -12,11 +12,10 @@ suite('performance', function() {
 var gzserver;
 var gazebo;
 
-// This value shouldn't be greater than 4900, or the test will time out.
 var test_period = 4000;
 var test_period_sec = test_period /1000;
 
-this.timeout(5000);
+this.timeout(5000+test_period);
 
 suiteSetup (function(done){
 
