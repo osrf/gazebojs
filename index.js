@@ -118,6 +118,27 @@ PosesFilter.prototype.stats = function() {
     console.log( 'message compression:'+ p + '% (' + this.msgCount + ' total)' );
 }
 
+Gazebo.prototype.deleteEntity = function(name, cb, options) {
+    var latch = false;
+    var toJson = true;
+    var type = 'gazebo.msgs.Request';
+    this.sim.publish('gazebo.msgs.Request', '~/entity_delete', {name:name}, function(err, data) {
+        console.log(err)
+        console.log(data)
+        if(err){
+            cb(err);
+            return;
+        }
+
+        var result = data;
+        // parse the string into a json msg
+        if(toJson) {
+            result = JSON.parse(data);
+        }
+        cb(err, result);
+
+    }, latch);
+}
 
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
 'RGBA_INT8', 'BGRA_INT8', 'RGB_INT16', 'RGB_INT32', 'BGR_INT8', 'BGR_INT16',
