@@ -139,7 +139,7 @@ Gazebo.prototype.play = function() {
     this.sim.play();
 }
 
-Gazebo.prototype.deleteEntity = function(name, cb, options) {
+Gazebo.prototype.deleteEntity = function(name, options) {
     var latch = false;
     var toJson = true;
     var type = 'gazebo.msgs.Request';

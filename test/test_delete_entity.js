@@ -36,22 +36,8 @@ suite('deletion', function() {
             done();
         });
         setTimeout(()=>{
-            gazebo.deleteEntity('coke_can');            
+            gazebo.sim.deleteEntity('coke_can');            
         },200)
-    });
-
-    // Test deletion of an entity.
-    test('Delete a model', function(done) {
-        gazebo.sim.spawn('model://cube_20k', 'box');
-        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
-            console.log(d);
-            assert(d.response === 'success' && d.request === 'entity_delete');
-            gazebo.unsubscribe('~/response');
-            done();
-        });
-        setTimeout(()=>{
-            gazebo.sim.deleteEntity('box');            
-        },400)
     });
 
     suiteTeardown(function() {
