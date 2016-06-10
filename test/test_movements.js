@@ -30,12 +30,10 @@ suite('movement', function() {
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             if(first){
                 old_orientation = d.pose[2].orientation;
-                console.log(old_orientation)
             }
             else{
                 new_orientation = d.pose[2].orientation;
-                console.log(new_orientation)
-                if(old_orientation!=new_orientation){
+                if(old_orientation!==new_orientation){
                     gazebo.unsubscribe('~/pose/info');
                     done();
                 }
