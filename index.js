@@ -144,21 +144,7 @@ Gazebo.prototype.deleteEntity = function(name, cb, options) {
     var toJson = true;
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
-    gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name}, function(err, data) {
-        console.log(err)
-        console.log(data)
-        if(err){
-            cb(err);
-            return;
-        }
-        var result = data;
-        // parse the string into a json msg
-        if(toJson) {
-            result = JSON.parse(data);
-        }
-        cb(err, result);
-
-    }, latch);
+    gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name});
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
