@@ -138,31 +138,6 @@ Gazebo.prototype.play = function() {
     this.sim.play();
 }
 
-
-Gazebo.prototype.deleteEntity = function(name, cb, options) {
-    var latch = false;
-    var toJson = true;
-    var type = 'gazebo.msgs.Request';
-    var msg = gazebo.msgs.request
-    this.sim.publish('gazebo.msgs.Request', '~/entity_delete', {name:name}, function(err, data) {
-        console.log(err)
-        console.log(data)
-        if(err){
-            cb(err);
-            return;
-        }
-
-        var result = data;
-        // parse the string into a json msg
-        if(toJson) {
-            result = JSON.parse(data);
-        }
-        cb(err, result);
-
-    }, latch);
-}
-
-
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
     var toJson = true;
