@@ -139,17 +139,6 @@ void GazeboPubSub::Play()
   this->worldControlPub->Publish(worldControlMsg);
 }
 
-///////////////////////////////////////////////////
-void GazeboPubSub::DeleteEntity(const char* _name)
-{
-  // create a request msg, with the name of the entitiy.
-  gazebo::msgs::Request *msg = gazebo::msgs::CreateRequest("entity_delete", _name);
-  // publish the msg.
-  this->requestPub->Publish(*msg);
-  // delete the msg, it is no longer needed.
-  delete msg;
-}
-
 /////////////////////////////////////////////////
 vector<string> GazeboPubSub::GetMaterials()
 {

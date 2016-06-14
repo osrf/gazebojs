@@ -140,8 +140,6 @@ Gazebo.prototype.play = function() {
 }
 
 Gazebo.prototype.deleteEntity = function(name, options) {
-    var latch = false;
-    var toJson = true;
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
     gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name});

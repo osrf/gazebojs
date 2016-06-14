@@ -76,7 +76,6 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
   NODE_SET_PROTOTYPE_METHOD(tp1, "pause", Pause);
   NODE_SET_PROTOTYPE_METHOD(tp1, "play", Play);
-  NODE_SET_PROTOTYPE_METHOD(tp1, "deleteEntity", DeleteEntity);
   NODE_SET_PROTOTYPE_METHOD(tp1, "spawn", Spawn);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
@@ -209,36 +208,6 @@ void GZPubSub::FindFile(const FunctionCallbackInfo<Value>& args)
   std::string r = gazebo::common::find_file(uri);
   v8::Handle<v8::String> returnStr = v8::String::NewFromUtf8(args.GetIsolate(), r.c_str());
   args.GetReturnValue().Set(returnStr);
-}
-
-/////////////////////////////////////////////////
-void GZPubSub::DeleteEntity(const FunctionCallbackInfo<Value>& args)
-{
-  HandleScope scope(args.GetIsolate());
-
-  if ( args.Length() != 1 )
-  {
-    args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(),
-        "Wrong number of arguments. 1 expected"));
-    return;
-  }
-
-  String::Utf8Value sarg0(args[0]->ToString());
-  std::string name(*sarg0);
-  try
-  {
-    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-    obj->gazebo->DeleteEntity(name.c_str());
-  }
-  catch(PubSubException &x)
-  {
-    args.GetIsolate()->ThrowException(
-      v8::String::NewFromUtf8(args.GetIsolate(),
-      x.what() ));
-    return;
-  }
-  args.GetReturnValue().SetUndefined();
 }
 
 /////////////////////////////////////////////////
