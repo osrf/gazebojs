@@ -5,13 +5,14 @@ gazebojs = require('../index');
 
 suite('performance', function() {
 
-// This test is to see how fast can we process msgs from a topic.
-// This would be a key to replace gzbridge by gazebojs, if the performance
-// turns out to be not good we wont be able to do it then.
+// This test is to see how fast can we receive msgs from gzserver.
 
 var gzserver;
 var gazebo;
 
+// Currently we are testing with 8 subscribers, more than that may require 
+// a time period more than 4 seconds to avoid a (core dumped) error 
+// [because gzserver didn't have the chance to unsubscribe].
 var test_period = 4000;
 var test_period_sec = test_period /1000;
 
@@ -37,14 +38,34 @@ suiteSetup (function(done){
         counter = 0;
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
+        });
+        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
+            counter ++;
             setTimeout(()=> {
               var rate = counter/test_period_sec;
                 console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
                 gazebo.unsubscribe('~/pose/info');
                 // We would consider this a minimum rate for now, could be changed later.
-                if(rate < 50){
-                  assert.fail(rate,50,'msgs reciving rate too slow','<');
-                  console.log('Too slow')
+                if(rate < 450){
+                  assert.fail(rate,450,'msgs reciving rate too slow','<');
                 }
                 else{
                 done();
