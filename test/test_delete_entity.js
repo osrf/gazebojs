@@ -35,9 +35,10 @@ suite('deletion', function() {
             gazebo.unsubscribe('~/response');
             done();
         });
+        gazebo.sim.spawn(model_uri, 'coke_can');
         setTimeout(()=>{
-            gazebo.sim.deleteEntity('coke_can');            
-        },200)
+            gazebo.deleteEntity('coke_can');            
+        },2000)
     });
 
     suiteTeardown(function() {

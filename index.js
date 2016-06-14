@@ -142,7 +142,9 @@ Gazebo.prototype.play = function() {
 Gazebo.prototype.deleteEntity = function(name, options) {
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
-    gazebo.publish('gazebo.msgs.Request', '~/request', {id:value, request:'entity_delete', data: name});
+    var msg = {id:value, request:'entity_delete', data: name};
+    var str = JSON.stringify(msg);
+    this.sim.publish(type, '~/request', str);
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
