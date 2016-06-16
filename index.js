@@ -130,14 +130,15 @@ function Gazebo (options) {
 
 exports.Gazebo = Gazebo;
 
+// Play the simulation.
 Gazebo.prototype.pause = function() {
-    this.sim.pause();
+    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false});
 }
 
-Gazebo.prototype.play = function() {
-    this.sim.play();
+// Pause the simulation.
+Gazebo.prototype.pause = function() {
+   this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
-
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
