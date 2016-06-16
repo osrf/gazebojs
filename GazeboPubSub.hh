@@ -86,9 +86,6 @@ namespace gzscript
     /// \brief lots of spawn
     private: gazebo::transport::PublisherPtr factoryPub;
 
-    /// \Delete a model.
-    private: gazebo::transport::PublisherPtr requestPub;
-
     /// \brief Publish world control messages
     private: gazebo::transport::PublisherPtr worldControlPub;
   };

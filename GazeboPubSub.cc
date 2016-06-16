@@ -175,11 +175,6 @@ GazeboPubSub::GazeboPubSub()
       this->node->Advertise<gazebo::msgs::WorldControl>(
       worldControlTopic);
 
-  // For controling world
-  this->requestPub =
-      this->node->Advertise<gazebo::msgs::Request>(
-      "~/request");
-
   // For spawning models
   this->factoryPub =
       this->node->Advertise<gazebo::msgs::Factory>("~/factory");
