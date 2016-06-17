@@ -131,7 +131,7 @@ function Gazebo (options) {
 exports.Gazebo = Gazebo;
 
 // Play the simulation.
-Gazebo.prototype.pause = function() {
+Gazebo.prototype.play = function() {
     this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false});
 }
 
