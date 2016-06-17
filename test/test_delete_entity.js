@@ -28,9 +28,7 @@ suite('deletion', function() {
 
     // Test deletion of an entity.
     test('Delete an entity from using gazebo prototype', function(done) {
-        gazebo.sim.spawn(model_uri, 'coke_can');
         gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
-            console.log(d);
             assert(d.response === 'success' && d.request === 'entity_delete');
             gazebo.unsubscribe('~/response');
             done();
