@@ -139,7 +139,6 @@ void GazeboPubSub::Play()
   this->worldControlPub->Publish(worldControlMsg);
 }
 
-
 /////////////////////////////////////////////////
 vector<string> GazeboPubSub::GetMaterials()
 {
