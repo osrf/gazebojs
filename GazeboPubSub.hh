@@ -66,6 +66,9 @@ namespace gzscript
 
     public: void Play();
 
+    /// \brief: returns the sdf version.
+    public: std::string GetSdfVer();
+
     public: void SpawnModel(const char *_type,
                          const char *_name,
                          double x,

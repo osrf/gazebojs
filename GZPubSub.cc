@@ -80,6 +80,7 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
   NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "sdfVersion", SdfVersion);
 
   // export the template
   constructor.Reset(isolate, tp1->GetFunction());
@@ -278,7 +279,17 @@ void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
                           pose[5]);
   args.GetReturnValue().SetUndefined();
 }
+///////////////////////////////////////////////
+void GZPubSub::SdfVersion(const v8::FunctionCallbackInfo<v8::Value>& args){
 
+  HandleScope scope(args.GetIsolate());
+
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
+  std::string version = obj->gazebo->GetSdfVer();
+  Local<Array> result_list = Array::New(args.GetIsolate());
+  result_list->Set(0,String::NewFromUtf8(args.GetIsolate(), version.c_str()));
+  args.GetReturnValue().Set(result_list);  
+}
 
 /////////////////////////////////////////////////
 void GZPubSub::Materials(const FunctionCallbackInfo<Value>& args)
