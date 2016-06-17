@@ -157,10 +157,6 @@ GazeboPubSub::GazeboPubSub()
       this->node->Advertise<gazebo::msgs::WorldControl>(
       worldControlTopic);
 
-  // For spawning models
-  this->factoryPub =
-      this->node->Advertise<gazebo::msgs::Factory>("~/factory");
-
   this->materialParser = new gzweb::OgreMaterialParser();
 }
 
@@ -169,7 +165,6 @@ GazeboPubSub::~GazeboPubSub()
 {
   Trace("GazeboPubSub::~GazeboPubSub()");
 
-  this->factoryPub.reset();
   this->worldControlPub.reset();
 
   delete this->materialParser;

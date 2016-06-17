@@ -86,9 +86,6 @@ namespace gzscript
     /// \brief Ogre material parser.
     private: gzweb::OgreMaterialParser *materialParser;
 
-    /// \brief lots of spawn
-    private: gazebo::transport::PublisherPtr factoryPub;
-
     /// \brief Publish world control messages
     private: gazebo::transport::PublisherPtr worldControlPub;
   };
