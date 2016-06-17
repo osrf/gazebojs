@@ -139,7 +139,7 @@ Gazebo.prototype.play = function() {
     this.sim.play();
 }
 
-Gazebo.prototype.deleteEntity = function(name, options) {
+Gazebo.prototype.deleteEntity = function(name) {
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
     var msg = {id:value, request:'entity_delete', data: name};
