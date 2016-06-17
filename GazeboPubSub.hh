@@ -69,15 +69,6 @@ namespace gzscript
     /// \brief: returns the sdf version.
     public: std::string GetSdfVer();
 
-    public: void SpawnModel(const char *_type,
-                         const char *_name,
-                         double x,
-                         double y,
-                         double z,
-                         double rx,
-                         double ry,
-                         double rz);
-
     public: std::vector<std::string> GetMaterials();
 
     /// \brief Gazebo transport node.
