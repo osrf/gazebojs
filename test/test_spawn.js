@@ -29,7 +29,6 @@ suite('spawn', function() {
     // Spawning a model
     test('spawn a model', function(done) {
         gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
-            console.log(d.name)
             gazebo.unsubscribe('~/model/info');
             assert(d.name === 'cube');
             done();
