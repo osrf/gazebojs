@@ -1,11 +1,11 @@
 var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
+util = require('util'),
+spawn = require('child_process').spawn;
+gazebojs = require('../index');
 
-    var model_uri = 'model://cube_20k';
+var model_uri = 'box';
 
-suite('spawn', function() {
+suite('deletion', function() {
 
     var gzserver;
     var gazebo;
@@ -26,22 +26,22 @@ suite('spawn', function() {
         }, 100);
     });
 
-    // Spawning a model
-    test('spawn a model', function(done) {
-        gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
-            console.log(d.name)
-            gazebo.unsubscribe('~/model/info');
-            assert(d.name === 'cube');
+    // Test deletion of an entity.
+    test('Delete an entity from using gazebo prototype', function(done) {
+        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
+            assert(d.response === 'success' && d.request === 'entity_delete');
+            gazebo.unsubscribe('~/response');
             done();
         });
         setTimeout(()=>{
-            gazebo.spawn(model_uri, 'cube');
-        },2000);
+            gazebo.spawn("box", 'coke_can');
+        },1000)
+        setTimeout(()=>{
+            gazebo.deleteEntity('coke_can');            
+        },2000)
     });
 
     suiteTeardown(function() {
-        console.log('unsubscribingTopics');
-        gazebo.unsubscribe('~/model/info');
         console.log('suiteTeardown');
         gzserver.kill('SIGHUP');
     });

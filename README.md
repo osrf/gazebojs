@@ -14,5 +14,7 @@ Installation
 
 npm install gazebojs
 
+Running the tests
 
+npm test
 

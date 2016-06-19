@@ -27,6 +27,7 @@
     "mocha": "^1.21.4",
     "node-gyp": "~1.0.1",
     "pngjs": "^2.2.0",
-    "stream-to-buffer": "^0.1.0"
+    "stream-to-buffer": "^0.1.0",
+    "random-js":"1.0.8"
   }
 }
