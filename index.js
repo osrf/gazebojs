@@ -11,6 +11,7 @@ let gz = require('./build/Release/gazebo');
 let Jimp = require('jimp');
 let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
+var random = require("random-js")(); // uses the nativeMath engine
 
 var fs = require('fs');
 // var Png = require('png').Png;
