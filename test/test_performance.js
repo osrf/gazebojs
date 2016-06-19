@@ -36,6 +36,7 @@ suiteSetup (function(done){
     test('Reciving msgs', function(done) {
         first = true;
         counter = 0;
+        var done_called = false;
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
         });
@@ -60,15 +61,20 @@ suiteSetup (function(done){
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
             setTimeout(()=> {
-              var rate = counter/test_period_sec;
-                console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
-                gazebo.unsubscribe('~/pose/info');
-                // We would consider this a minimum rate for now, could be changed later.
-                if(rate < 450){
-                  assert.fail(rate,450,'msgs reciving rate too slow','<');
-                }
-                else{
-                done();
+                if (!done_called) {                
+                    var rate = counter/test_period_sec;
+                    console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
+                    gazebo.unsubscribe('~/pose/info');
+                    // We would consider this a minimum rate for now, could be changed later.
+                    if(rate < 450){          
+                        assert.fail(rate,500,'msgs reciving rate too slow','<');
+                        done();
+                        done_called = true;
+                    }
+                    else{
+                        done();
+                        done_called = true;
+                    }
                 }            
             }, test_period);
         });

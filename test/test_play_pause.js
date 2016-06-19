@@ -25,26 +25,45 @@ suite('play and pause test', function() {
     });
 
     test('test pause', function(done) {
+        var first_check = false;
 	gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-	    if(d.pause){
-		done();
-		}
-		gazebo.unsubscribe('~/world_control');
-	});
-    	gazebo.pause();
+	     if(d.pause){
+		first_check = true;
+	     }
+	     gazebo.unsubscribe('~/world_control');
+           });
+            gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
+                console.log(d)
+                if(d.paused && first_check){
+                    done();
+                }
+           });
+        setTimeout(()=> {
+            gazebo.pause();
+        }, 1000);    
     });
 
     test('test play', function(done) {
-	gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-		if(!d.pause){
-			done();
-		}
-            	gazebo.unsubscribe('~/world_control');
-	});
+        var first_check = false;
+            gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
+                console.log(d)
+	    if(!d.pause){
+	         first_check = true;
+	     }
+                gazebo.unsubscribe('~/world_control');
+            });
+            gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
+               console.log(d)
+               if(!d.paused && first_check){
+                    done();
+               }
+            });
 	gazebo.play();
     });
 
     suiteTeardown(function() {
+        console.log('unsubscribing');
+        gazebo.unsubscribe('~/world_stats');
         console.log('suiteTeardown');
         gzserver.kill('SIGHUP');
     });

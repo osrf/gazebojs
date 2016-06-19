@@ -141,6 +141,13 @@ Gazebo.prototype.pause = function() {
    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
+Gazebo.prototype.deleteEntity = function(name) {
+    var type = 'gazebo.msgs.Request';
+    var value = random.integer(1, 1000);
+    var msg = {id:value, request:'entity_delete', data: name};
+    this.publish(type, '~/request', msg);
+}
+
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
     var toJson = true;
