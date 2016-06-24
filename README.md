@@ -6,7 +6,7 @@ This project offers NodeJs bindings for the Gazebo simulator (http://www.gazebos
 * The version of gazebojs follows the version of Gazebo, so you should use gazebojs 6 if you have Gazebo 6 installed
 
 
-# Prerequisites
+## Prerequisites
 
 In addition to Gazebo, you must also install: 
 
@@ -14,16 +14,8 @@ In addition to Gazebo, you must also install:
 * jansson: sudo apt-get install libjansson-dev
 * libgazeboX-dev (where X is your Gazebo version see http://gazebosim.org/tutorials?tut=install)
 
-## Ubuntu and node
 
-In Ubuntu Trusty (14.04), the default version of Node is 0.10.x.
-In Ubuntu Xenial (16.04), the default version of Node is 4.2.x
-
-Node 0.10 is compatible with Gazebo 4 to 6, while 4.2.x is required for Gazebo 7 and up. 
-Please refer to the installation (tutorial)[http://gazebosim.org/tutorials?tut=gazebojs_install&cat=gazebojs] for more details
-on how to change your version of Node.
-
-# Setup
+## Setup
 
 Here are the steps for Xenial
 
@@ -42,4 +34,13 @@ npm install gazebojs
 npm test
 
 ```
-Please take a moment to look at the (tutorials)[http://gazebosim.org/tutorials?cat=gazebojs]
+Please take a moment to look at the tutorials: http://gazebosim.org/tutorials?cat=gazebojs
+
+## Ubuntu and node
+
+In Ubuntu Trusty (14.04), the default version of Node is 0.10.x.
+In Ubuntu Xenial (16.04), the default version of Node is 4.2.x
+
+Node 0.10 is compatible with Gazebo 4 to 6, while 4.2.x is required for Gazebo 7 and up. 
+Please refer to the installation tutorial http://gazebosim.org/tutorials?tut=gazebojs_install&cat=gazebojs for more details
+on how to change your version of Node.
