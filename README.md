@@ -24,14 +24,11 @@ mkdir simjs
 cd simjs
 
 # install node and gazebo
-sudo apt install -y gazebo7 libgazebo7-dev libjansson-dev npm nodejs nodejs-legacy
+sudo apt install -y gazebo7 libgazebo7-dev libjansson-dev npm nodejs nodejs-legacy 
 
 # setup an empty node project 
 npm init -y
 npm install gazebojs
-
-# run the tests
-npm test
 
 ```
 Please take a moment to look at the tutorials: http://gazebosim.org/tutorials?cat=gazebojs
