@@ -11,6 +11,7 @@ let gz = require('./build/Release/gazebo');
 let Jimp = require('jimp');
 let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
+var random = require("random-js")(); // uses the nativeMath engine
 
 var fs = require('fs');
 // var Png = require('png').Png;
@@ -144,8 +145,15 @@ Gazebo.prototype.play = function() {
 //   name: the model name
 //   x, y, z, rx, ry, rz: the pose of the model
 Gazebo.prototype.spawn = function (args) {
-  // send all args to this.sim
-  this.sim.spawn.apply(this.sim, arguments)
+    // send all args to this.sim
+    this.sim.spawn.apply(this.sim, arguments)
+}
+
+Gazebo.prototype.deleteEntity = function(name) {
+    var type = 'gazebo.msgs.Request';
+    var value = random.integer(1, 1000);
+    var msg = {id:value, request:'entity_delete', data: name};
+    this.publish(type, '~/request', msg);
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
@@ -162,7 +170,7 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         }
 
         var result = data;
-	    // parse the string into a json msg
+                // parse the string into a json msg
         if(toJson) {
             result = JSON.parse(data);
         }

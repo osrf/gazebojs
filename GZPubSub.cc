@@ -210,7 +210,6 @@ void GZPubSub::FindFile(const FunctionCallbackInfo<Value>& args)
   args.GetReturnValue().Set(returnStr);
 }
 
-
 /////////////////////////////////////////////////
 void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
 {
