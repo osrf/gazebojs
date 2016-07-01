@@ -34,50 +34,22 @@ suiteSetup (function(done){
 
     // How fast can gazebojs process msgs from a certain topic.
     test('Reciving msgs', function(done) {
-        first = true;
         counter = 0;
-        var done_called = false;
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
         });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-            setTimeout(()=> {
-                if (!done_called) {                
-                    var rate = counter/test_period_sec;
-                    console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
-                    gazebo.unsubscribe('~/pose/info');
-                    // We would consider this a minimum rate for now, could be changed later.
-                    if(rate < 450){          
-                        assert.fail(rate,500,'msgs reciving rate too slow','<');
-                        done();
-                        done_called = true;
-                    }
-                    else{
-                        done();
-                        done_called = true;
-                    }
-                }            
-            }, test_period);
-        });
+        setTimeout(()=> {
+                var rate = counter/test_period_sec;
+                console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
+                gazebo.unsubscribe('~/pose/info');
+                // We would consider this a minimum rate for now, could be changed later.
+                if(rate < 45){          
+                    assert.fail(rate,50,'msgs reciving rate too slow','<');
+                }
+                else{
+                    done();
+                }        
+        }, test_period);
     });
 
       suiteTeardown(function() {
