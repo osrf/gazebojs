@@ -150,7 +150,6 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
     var toJson = true;
     if(options){
-        if (options['toJson']) toJson = options.toJson;
         if (options['latch']) latch = options.latch;
     }
     this.sim.subscribe(type, topic, function(err, data) {
@@ -160,10 +159,14 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         }
 
         var result = data;
-                // parse the string into a json msg
-        if(toJson) {
-            result = JSON.parse(data);
-        }
+        if(options){
+            if (options['toJson']){
+                if (options.toJson){
+                    // parse the string into a json msg
+                    result = JSON.parse(data);
+                }
+            }
+        }   
         cb(err, result);
 
     }, latch);
