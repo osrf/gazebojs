@@ -12,6 +12,7 @@ let Jimp = require('jimp');
 let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
 var random = require("random-js")(); // uses the nativeMath engine
+var exec = require('child_process').exec;
 
 var fs = require('fs');
 // var Png = require('png').Png;
@@ -298,6 +299,17 @@ Gazebo.prototype.readFile = function(model_uri) {
 Gazebo.prototype.modelConfig = function(model_uri, cb){
     var p = this.sim.find_file(model_uri);
     cb(null, conf);
+}
+
+Gazebo.prototype.topicsList = function(cb) {
+    const child = exec('gz topic --l' , (error, stdout, stderr) => {
+            if (error) {
+                throw error;
+            }else{
+                console.log(stdout);
+                cb(null,stdout);
+            }
+        })
 }
 
 exports.connect = function (options ) {
