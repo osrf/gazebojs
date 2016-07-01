@@ -25,7 +25,7 @@ suite('subscribe', function() {
         }, 100);
     });
 
-    // Test deletion of an entity.
+    // Test default subscribe.
     test('default subscribe', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
@@ -39,7 +39,7 @@ suite('subscribe', function() {
         gazebo.sim.spawn('box','box');
     });
 
-    // Test deletion of an entity.
+    // Test with toJson set to false.
     test('"toJson" set to false ', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
@@ -53,7 +53,7 @@ suite('subscribe', function() {
         },{'toJson':false});
     });
 
-    // Test deletion of an entity.
+    // Test with toJson set to true.
     test('"toJson" set to true ', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
