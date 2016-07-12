@@ -1,7 +1,7 @@
 var assert = require('assert'),
-util = require('util'),
-spawn = require('child_process').spawn;
-gazebojs = require('../index');
+    util = require('util'),
+    spawn = require('child_process').spawn;
+    gazebojs = require('../index');
 
 suite('filter test using gzserver', function() {
 
@@ -13,7 +13,6 @@ suite('filter test using gzserver', function() {
     this.timeout(5000);
 
     suiteSetup (function(done){
-
         // console.log('suiteSetup');
         gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
@@ -71,7 +70,6 @@ suite('filter test using gzserver', function() {
             }
          })
     });
-
 
     // no msgs should pass throught.
     test('all msgs are filtered', function(done) {
