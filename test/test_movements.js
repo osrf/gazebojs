@@ -35,7 +35,7 @@ suite('movement', function() {
                 new_orientation = d.pose[2].orientation;
                 gazebo.unsubscribe('~/pose/info');
                 if(old_orientation.x!==new_orientation.x || old_orientation.y!==new_orientation.y
-                    || old_orientation.z!==new_orientation.z || old_orientation.w!==new_orientation.w){
+                    || old_orientation.w!==new_orientation.w || old_orientation.z!==new_orientation.z){
                     done();
                 }
                 else{
