@@ -81,6 +81,7 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
   NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "advertise", Advertise);
+
   // export the template
   constructor.Reset(isolate, tp1->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "Sim"), tp1->GetFunction());
