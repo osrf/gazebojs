@@ -80,7 +80,7 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
   NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
-
+  NODE_SET_PROTOTYPE_METHOD(tp1, "advertise", Advertise);
   // export the template
   constructor.Reset(isolate, tp1->GetFunction());
   exports->Set(String::NewFromUtf8(isolate, "Sim"), tp1->GetFunction());
@@ -208,6 +208,58 @@ void GZPubSub::FindFile(const FunctionCallbackInfo<Value>& args)
   std::string r = gazebo::common::find_file(uri);
   v8::Handle<v8::String> returnStr = v8::String::NewFromUtf8(args.GetIsolate(), r.c_str());
   args.GetReturnValue().Set(returnStr);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void GZPubSub::Advertise(const FunctionCallbackInfo<Value>& args)
+{
+  HandleScope scope(args.GetIsolate());
+
+  // we expect two string argument
+  if ( (args.Length() != 2)  )
+  {
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong number of arguments. 2 expected"));
+    return;
+  }
+
+  if (!args[0]->IsString())
+  {
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Topic String expect as an argument."));
+    return;
+  }
+
+  if (!args[1]->IsString())
+  {
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      "Wrong argument type. Type String expect as an argument."));
+    return;
+  }
+
+  String::Utf8Value sarg0(args[0]->ToString());
+  std::string topic(*sarg0);
+
+  String::Utf8Value sarg1(args[1]->ToString());
+  std::string type(*sarg1);
+
+  try
+  {
+    GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
+    gazebo::transport::PublisherPtr p;
+    obj->gazebo->Advertise(topic.c_str(),type.c_str());
+  }
+  catch(PubSubException &x)
+  {
+    args.GetIsolate()->ThrowException(
+      v8::String::NewFromUtf8(args.GetIsolate(),
+      x.what() ));
+    return;
+  }
+  args.GetReturnValue().SetUndefined();
 }
 
 /////////////////////////////////////////////////
