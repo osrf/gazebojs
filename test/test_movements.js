@@ -33,12 +33,13 @@ suite('movement', function() {
             }
             else{
                 new_orientation = d.pose[2].orientation;
-                if(old_orientation!==new_orientation){
-                    gazebo.unsubscribe('~/pose/info');
+                gazebo.unsubscribe('~/pose/info');
+                if(old_orientation.x!==new_orientation.x || old_orientation.y!==new_orientation.y
+                    || old_orientation.z!==new_orientation.z || old_orientation.w!==new_orientation.w){
                     done();
                 }
                 else{
-                    gazebo.unsubscribe('~/pose/info');
+                    assert.fail(old_orientation, new_orientation, 'model not moving','=');
                 }
             }
             first = false;
