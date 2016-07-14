@@ -33,7 +33,6 @@ suite('play and pause test', function() {
 	     gazebo.unsubscribe('~/world_control');
            });
             gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
-                console.log(d)
                 if(d.paused && first_check){
                     done();
                 }
@@ -46,14 +45,12 @@ suite('play and pause test', function() {
     test('test play', function(done) {
         var first_check = false;
             gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-                console.log(d)
 	    if(!d.pause){
 	         first_check = true;
 	     }
                 gazebo.unsubscribe('~/world_control');
             });
             gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
-               console.log(d)
                if(!d.paused && first_check){
                     done();
                }
@@ -62,7 +59,6 @@ suite('play and pause test', function() {
     });
 
     suiteTeardown(function() {
-        console.log('unsubscribing');
         gazebo.unsubscribe('~/world_stats');
         console.log('suiteTeardown');
         gzserver.kill('SIGHUP');
