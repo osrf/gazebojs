@@ -75,7 +75,7 @@ void GzPublisher::Publish(const char *msg)
 }
 
 /////////////////////////////////////////////////
-void GazeboPubSub::Advertise(const char *_topic, const char *_type)
+void GazeboPubSub::Advertise(const char *_type, const char *_topic)
 {
   MocType::globalName = _type;
   this->advertisePub = this->node->Advertise< MocType >(_topic);

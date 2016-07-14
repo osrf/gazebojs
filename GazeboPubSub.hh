@@ -66,7 +66,7 @@ namespace gzscript
 
     public: void Play();
 
-    public: void Advertise(const char *_topic, const char *_type);
+    public: void Advertise(const char *_type, const char *_topic);
     
     public: void SpawnModel(const char *_type,
                          const char *_name,

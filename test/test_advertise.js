@@ -32,7 +32,7 @@ suite('adverise a topic test', function() {
 
     // test to check if the topic was advertised correctly.
     test('test adverise', function(done) {
-        gazebo.sim.advertise(topic_name, msg_type);
+        gazebo.sim.advertise(msg_type, topic_name);
         const child = exec('gz topic --l' , (error, stdout, stderr) => {
             if (error) {
                 throw error;
