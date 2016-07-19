@@ -146,7 +146,6 @@ vector<string> GazeboPubSub::GetMaterials()
   return v;
 }
 
-
 /////////////////////////////////////////////////
 GazeboPubSub::GazeboPubSub()
 {
