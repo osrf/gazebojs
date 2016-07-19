@@ -74,8 +74,6 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "subscriptions", Subscriptions);
   NODE_SET_PROTOTYPE_METHOD(tp1, "publish", Publish);
   NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
-  NODE_SET_PROTOTYPE_METHOD(tp1, "pause", Pause);
-  NODE_SET_PROTOTYPE_METHOD(tp1, "play", Play);
   NODE_SET_PROTOTYPE_METHOD(tp1, "spawn", Spawn);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
@@ -104,28 +102,6 @@ void GZPubSub::New(const FunctionCallbackInfo<Value>& args)
     Local<Function> cons = Local<Function>::New(args.GetIsolate(), constructor);
     args.GetReturnValue().Set(cons->NewInstance(argc, argv));
   }
-}
-
-//////////////////////////////////////////////////
-void GZPubSub::Pause(const FunctionCallbackInfo<Value>& args)
-{
-  HandleScope scope(args.GetIsolate());
-
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-  obj->gazebo->Pause();
-
-  args.GetReturnValue().SetUndefined();
-}
-
-
-/////////////////////////////////////////////////
-void GZPubSub::Play(const FunctionCallbackInfo<Value>& args)
-{
-  HandleScope scope(args.GetIsolate());
-
-  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-  obj->gazebo->Play();
-  args.GetReturnValue().SetUndefined();
 }
 
 /////////////////////////////////////////////////

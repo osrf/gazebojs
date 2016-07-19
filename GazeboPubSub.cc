@@ -129,23 +129,6 @@ Publisher *GazeboPubSub::CreatePublisher(const char* _type, const char *_topic)
   return pub;
 }
 
-
-/////////////////////////////////////////////////
-void GazeboPubSub::Pause()
-{
-  gazebo::msgs::WorldControl worldControlMsg;
-  worldControlMsg.set_pause(1);
-  this->worldControlPub->Publish(worldControlMsg);
-}
-
-/////////////////////////////////////////////////
-void GazeboPubSub::Play()
-{
-  gazebo::msgs::WorldControl worldControlMsg;
-  worldControlMsg.set_pause(0);
-  this->worldControlPub->Publish(worldControlMsg);
-}
-
 /////////////////////////////////////////////////
 vector<string> GazeboPubSub::GetMaterials()
 {
