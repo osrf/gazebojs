@@ -26,31 +26,31 @@ suite('subscribe', function() {
     });
 
     // Test default subscribe.
-    test('default subscribe', function(done) {
+    test('toJson" set to false', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
             var type = typeof d;
-            if(type === 'string'){
+            if(type === 'object'){
                 done();
             }else{
                 assert.fail('string', 'json', 'Returned a wrong type, return type not string', '!=');
             }
-        });
+        },{'toJson': false});
         gazebo.sim.spawn('box','box');
     });
 
     // Test with toJson set to false.
-    test('"toJson" set to false ', function(done) {
+    test('default subscribe', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
             var type = typeof d;
-            if(type === 'string'){
+            if(type === 'object'){
                 done();
             }
             else{
-                assert.fail('string', 'json', 'Returned a wrong type, return type not string', '!=');
+                assert.fail('string', 'json', 'Returned a wrong type, return type not json', '!=');
             }
-        },{'toJson':false});
+        });
     });
 
     // Test with toJson set to true.

@@ -162,12 +162,13 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         var result = data;
         if(options){
             if (options['toJson']){
-                if (options.toJson){
-                    // parse the string into a json msg
-                    result = JSON.parse(data);
+                if (!options.toJson){
+                    cb(err, result);
                 }
             }
         }   
+        // parse the string into a json msg
+        result = JSON.parse(data);
         cb(err, result);
 
     }, latch);
