@@ -62,10 +62,6 @@ namespace gzscript
 
     protected: virtual Publisher  *CreatePublisher(const char* type, const char *topic);
 
-    public: void Pause();
-
-    public: void Play();
-
     public: void SpawnModel(const char *_type,
                          const char *_name,
                          double x,

@@ -95,10 +95,6 @@ namespace gzscript
 
     private: static void Publish(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static void Pause(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-    private: static void Play(const v8::FunctionCallbackInfo<v8::Value>& args);
-
     private: static void  Spawn(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     /// \brief Get a model's sdf file
