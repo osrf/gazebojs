@@ -131,12 +131,14 @@ function Gazebo (options) {
 
 exports.Gazebo = Gazebo;
 
-Gazebo.prototype.pause = function() {
-    this.sim.pause();
+// Play the simulation.
+Gazebo.prototype.play = function() {
+    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false});
 }
 
-Gazebo.prototype.play = function() {
-    this.sim.play();
+// Pause the simulation.
+Gazebo.prototype.pause = function() {
+   this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
 Gazebo.prototype.deleteEntity = function(name) {
@@ -148,7 +150,6 @@ Gazebo.prototype.deleteEntity = function(name) {
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
     var latch = false;
-    var toJson = true;
     if(options){
         if (options['latch']) latch = options.latch;
     }

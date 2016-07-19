@@ -35,9 +35,9 @@ suite('paths', function() {
 
     test('sdf path', function(done) {
         // do not filter
-        var sdfName = gazebo.sim.modelFile(model_uri );
-        console.log( model_uri + ': ' + sdfName)
-        assert(sdfName.search(model_sdf) != -1);
+        var sdfName = gazebo.sim.modelFile(model_uri);
+        assert(sdfName.search('coke_can') != -1, 
+	  'sdf file: ' + sdfName + ' is not a coke can model' )
         done();
     });
 
