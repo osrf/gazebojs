@@ -75,6 +75,13 @@ void GzPublisher::Publish(const char *msg)
 }
 
 /////////////////////////////////////////////////
+void GazeboPubSub::Advertise(const char *_type, const char *_topic)
+{
+  MocType::globalName = _type;
+  this->advertisePub = this->node->Advertise< MocType >(_topic);
+}
+
+/////////////////////////////////////////////////
 GzSubscriber::GzSubscriber(gazebo::transport::NodePtr &_node, const char* _type, const char* _topic, bool _latch)
           :Subscriber(_type, _topic, _latch)
 {
@@ -120,23 +127,6 @@ Publisher *GazeboPubSub::CreatePublisher(const char* _type, const char *_topic)
 {
   Publisher *pub = new GzPublisher(this->node, _type, _topic);
   return pub;
-}
-
-
-/////////////////////////////////////////////////
-void GazeboPubSub::Pause()
-{
-  gazebo::msgs::WorldControl worldControlMsg;
-  worldControlMsg.set_pause(1);
-  this->worldControlPub->Publish(worldControlMsg);
-}
-
-/////////////////////////////////////////////////
-void GazeboPubSub::Play()
-{
-  gazebo::msgs::WorldControl worldControlMsg;
-  worldControlMsg.set_pause(0);
-  this->worldControlPub->Publish(worldControlMsg);
 }
 
 /////////////////////////////////////////////////
