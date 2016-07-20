@@ -21,41 +21,42 @@ suite('play and pause test', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, 4000);
     });
 
     test('test pause', function(done) {
         var first_check = false;
-	gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-	     if(d.pause){
-		first_check = true;
-	     }
-	     gazebo.unsubscribe('~/world_control');
-           });
-            gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
-                if(d.paused && first_check){
-                    done();
-                }
-           });
-        setTimeout(()=> {
-            gazebo.pause();
-        }, 1000);
+	      gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
+	        if(d.pause){
+		          first_check = true;
+	        }
+	        gazebo.unsubscribe('~/world_control');
+        });
+
+        gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
+          if(d.paused && first_check){
+              done();
+          }
+        });
+        setTimeout(()=>{
+            gazebo.pause()
+        }, 10)
     });
 
     test('test play', function(done) {
         var first_check = false;
-            gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-	    if(!d.pause){
-	         first_check = true;
-	     }
-                gazebo.unsubscribe('~/world_control');
-            });
-            gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
-               if(!d.paused && first_check){
-                    done();
-               }
-            });
-	gazebo.play();
+        gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
+            if(!d.pause){
+                first_check = true;
+            }
+            gazebo.unsubscribe('~/world_control');
+        });
+        gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
+            if(!d.paused && first_check){
+                done();
+            }
+        });
+        gazebo.play();
     });
 
     suiteTeardown(function() {
