@@ -1,7 +1,7 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 suite('filter test using gzserver', function() {
 
@@ -41,7 +41,7 @@ suite('filter test using gzserver', function() {
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               // no filtereing with default params
-              assert( poses == poses0) 
+              assert( poses == poses0)
               done()
             }
          })
@@ -65,7 +65,7 @@ suite('filter test using gzserver', function() {
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               // some messages were filtered
-              assert( poses1 < poses)   
+              assert( poses1 < poses)
               done()
             }
          })
@@ -109,7 +109,7 @@ suite('filter test using gzserver', function() {
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               // some messages were filtered
-              assert( poses1 < poses)   
+              assert( poses1 < poses)
               done()
             }
          })
@@ -131,7 +131,7 @@ suite('filter test using gzserver', function() {
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               // some messages were filtered
-              assert( poses1 < poses)   
+              assert( poses1 < poses)
               done()
             }
          })
@@ -153,7 +153,7 @@ suite('filter test using gzserver', function() {
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               // no messages were filtered
-              assert.equal(poses1, poses);   
+              assert.equal(poses1, poses);
               done()
             }
          })
