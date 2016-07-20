@@ -1,7 +1,7 @@
-var assert = require('assert'),
-util = require('util'),
-spawn = require('child_process').spawn;
-gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 suite('performance', function() {
 
@@ -10,8 +10,8 @@ suite('performance', function() {
 var gzserver;
 var gazebo;
 
-// Currently we are testing with 8 subscribers, more than that may require 
-// a time period more than 4 seconds to avoid a (core dumped) error 
+// Currently we are testing with 8 subscribers, more than that may require
+// a time period more than 4 seconds to avoid a (core dumped) error
 // [because gzserver didn't have the chance to unsubscribe].
 var test_period = 4000;
 var test_period_sec = test_period /1000;
@@ -43,12 +43,12 @@ suiteSetup (function(done){
                 console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
                 gazebo.unsubscribe('~/pose/info');
                 // We would consider this a minimum rate for now, could be changed later.
-                if(rate < 45){          
+                if(rate < 45){
                     assert.fail(rate,50,'msgs reciving rate too slow','<');
                 }
                 else{
                     done();
-                }        
+                }
         }, test_period);
     });
 

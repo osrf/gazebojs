@@ -1,7 +1,7 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 suite('play and pause test', function() {
 
@@ -39,7 +39,7 @@ suite('play and pause test', function() {
            });
         setTimeout(()=> {
             gazebo.pause();
-        }, 1000);    
+        }, 1000);
     });
 
     test('test play', function(done) {
