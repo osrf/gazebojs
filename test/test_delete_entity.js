@@ -1,9 +1,8 @@
-var assert = require('assert'),
-util = require('util'),
-spawn = require('child_process').spawn;
-gazebojs = require('../index');
-
-var model_uri = 'model://coke_can';
+const assert = require('assert')
+const  util = require('util')
+const  spawn = require('child_process').spawn
+const  gazebojs = require('../index')
+const  model_uri = 'model://coke_can'
 
 suite('deletion', function() {
 
@@ -35,7 +34,7 @@ suite('deletion', function() {
         });
         gazebo.sim.spawn(model_uri, 'coke_can');
         setTimeout(()=>{
-            gazebo.deleteEntity('coke_can');            
+            gazebo.deleteEntity('coke_can');
         },2000)
     });
 
