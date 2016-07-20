@@ -26,7 +26,7 @@ suite('subscribe', function() {
     });
 
     // Test default subscribe.
-    test('toJson" set to false', function(done) {
+    test('toJson set to false', function(done) {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
             var type = typeof d;

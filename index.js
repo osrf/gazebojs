@@ -164,6 +164,7 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
             if (options['toJson']){
                 if (!options.toJson){
                     cb(err, result);
+                    return;
                 }
             }
         }   
