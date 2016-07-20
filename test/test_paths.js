@@ -1,15 +1,15 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 
-var model_uri = 'model://coke_can';
-var model_mesh= 'model://coke_can/meshes/coke_can.dae';
+const model_uri = 'model://coke_can'
+const model_mesh= 'model://coke_can/meshes/coke_can.dae'
 
-var model_sdf = '/models/coke_can/model.sdf';
-var model_config = '/models/coke_can/model.config';
-var model_mesh_path = '/models/coke_can/meshes/coke_can.dae';
+const model_sdf = '/models/coke_can/model.sdf'
+const model_config = '/models/coke_can/model.config'
+const model_mesh_path = '/models/coke_can/meshes/coke_can.dae'
 
 suite('paths', function() {
 
@@ -36,7 +36,7 @@ suite('paths', function() {
     test('sdf path', function(done) {
         // do not filter
         var sdfName = gazebo.sim.modelFile(model_uri);
-        assert(sdfName.search('coke_can') != -1, 
+        assert(sdfName.search('coke_can') != -1,
 	  'sdf file: ' + sdfName + ' is not a coke can model' )
         done();
     });
