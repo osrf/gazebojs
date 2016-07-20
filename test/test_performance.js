@@ -33,7 +33,7 @@ suiteSetup (function(done){
     });
 
     // How fast can gazebojs process msgs from a certain topic.
-    test('Reciving msgs', function(done) {
+    test('Receiving msgs', function(done) {
         counter = 0;
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
