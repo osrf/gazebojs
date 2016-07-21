@@ -2,7 +2,7 @@ const assert = require('assert')
 const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
-const  model_uri = 'model://coke_can'
+const  model_uri = 'coke_can'
 
 suite('deletion', function() {
 
@@ -32,7 +32,7 @@ suite('deletion', function() {
             gazebo.unsubscribe('~/response');
             done();
         });
-        gazebo.sim.spawn(model_uri, 'coke_can');
+        gazebo.spawn(model_uri, 'coke_can');
         setTimeout(()=>{
             gazebo.deleteEntity('coke_can');
         },2000)

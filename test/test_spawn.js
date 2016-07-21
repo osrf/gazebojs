@@ -1,9 +1,7 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
-
-    var model_uri = 'model://cube_20k';
+const assert = require('assert')
+const  util = require('util')
+const  spawn = require('child_process').spawn
+const  gazebojs = require('../index')
 
 suite('spawn', function() {
 
@@ -33,8 +31,9 @@ suite('spawn', function() {
             assert(d.name === 'cube');
             done();
         });
+        gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
-            gazebo.spawn(model_uri, 'cube');
+            gazebo.spawn('cube_20k', 'cube');
         },2000);
     });
 
