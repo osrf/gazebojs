@@ -95,9 +95,9 @@ namespace gzscript
 
     private: static void Publish(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-    private: static void Pause(const v8::FunctionCallbackInfo<v8::Value>& args);
-
-    private: static void Play(const v8::FunctionCallbackInfo<v8::Value>& args);
+    /// \brief Pushlish advertise msgs.
+    private: static void Advertise(const v8::FunctionCallbackInfo<v8::Value>& args);
+    
     /// \brief Get the sdf version
     private: static void SdfVersion(const v8::FunctionCallbackInfo<v8::Value>& args);
 

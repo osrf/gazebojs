@@ -62,9 +62,7 @@ namespace gzscript
 
     protected: virtual Publisher  *CreatePublisher(const char* type, const char *topic);
 
-    public: void Pause();
-
-    public: void Play();
+    public: void Advertise(const char *_type, const char *_topic);
 
     /// \brief: returns the sdf version.
     public: std::string GetSdfVer();
@@ -76,6 +74,9 @@ namespace gzscript
 
     /// \brief Ogre material parser.
     private: gzweb::OgreMaterialParser *materialParser;
+
+    /// \brief Pushlish advertise msgs.
+    private: gazebo::transport::PublisherPtr advertisePub;
 
     /// \brief Publish world control messages
     private: gazebo::transport::PublisherPtr worldControlPub;

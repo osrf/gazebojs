@@ -131,12 +131,14 @@ function Gazebo (options) {
 
 exports.Gazebo = Gazebo;
 
-Gazebo.prototype.pause = function() {
-    this.sim.pause();
+// Play the simulation.
+Gazebo.prototype.play = function() {
+    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false});
 }
 
-Gazebo.prototype.play = function() {
-    this.sim.play();
+// Pause the simulation.
+Gazebo.prototype.pause = function() {
+   this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
 /// \brief Event callback used for inserting models into the editor
@@ -239,7 +241,7 @@ Gazebo.prototype.subscribe = function(type, topic, cb, options) {
         }
 
         var result = data;
-                // parse the string into a json msg
+	    // parse the string into a json msg
         if(toJson) {
             result = JSON.parse(data);
         }
