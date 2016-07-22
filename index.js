@@ -210,7 +210,7 @@ Gazebo.prototype.spawn = function(type, name) {
           + "  <pose>" + pos.x + " " + pos.y + " "+ pos.z 
                     + " " + rpy.x + " "   + rpy.y + " " + rpy.z + "</pose>"
           + "  <include>"
-          + "    <uri> model://" + type + "</uri>"
+          + "    <uri>" + type + "</uri>"
           + "  </include>"
           + "</model>"
           + "</sdf>";

@@ -33,8 +33,8 @@ suite('spawn', function() {
         });
         gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
-            gazebo.spawn('cube_20k', 'cube');
-        },2000);
+            gazebo.spawn('box', 'cube');
+        },1500);
     });
 
     suiteTeardown(function() {

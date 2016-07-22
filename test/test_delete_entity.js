@@ -2,7 +2,7 @@ const assert = require('assert')
 const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
-const  model_uri = 'coke_can'
+const  model_uri = 'model://coke_can'
 
 suite('deletion', function() {
 
