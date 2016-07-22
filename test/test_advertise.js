@@ -2,12 +2,17 @@ const assert = require('assert')
 const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
-const  model_uri = 'model://coke_can'
+const exec = require('child_process').exec
 
-suite('deletion', function() {
+suite('adverise a topic test', function() {
 
     var gzserver;
     var gazebo;
+    var name = 'hello/world';
+    var topic_name = '~/' + name;
+    var msg_type = 'Factory';
+    
+    var msg = {pause:true};
 
     this.timeout(5000);
 
@@ -25,17 +30,19 @@ suite('deletion', function() {
         }, 100);
     });
 
-    // Test deletion of an entity.
-    test('Delete an entity from using gazebo prototype', function(done) {
-        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
-            assert(d.response === 'success' && d.request === 'entity_delete');
-            gazebo.unsubscribe('~/response');
-            done();
+    // test to check if the topic was advertised correctly.
+    test('test adverise', function(done) {
+        gazebo.sim.advertise(msg_type, topic_name);
+        const child = exec('gz topic --l' , (error, stdout, stderr) => {
+            if (error) {
+                throw error;
+            }
+            if(stdout.indexOf(name)!==-1){
+                    done();
+            }else{
+                    assert.fail(1, 2, 'topic not found' + topic_name , '>');
+            }
         });
-        gazebo.sim.spawn(model_uri, 'coke_can');
-        setTimeout(()=>{
-            gazebo.deleteEntity('coke_can');
-        },2000)
     });
 
     suiteTeardown(function() {
