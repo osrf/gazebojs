@@ -149,30 +149,24 @@ Gazebo.prototype.deleteEntity = function(name) {
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
-    var latch = false;
+    var latch = false
+    var json = true
     if(options){
-        if (options['latch']) latch = options.latch;
+        if (typeof options['latch'] == "boolean") latch = options.latch
+        if (typeof options['toJson'] == "boolean") json = options.toJson
     }
     this.sim.subscribe(type, topic, function(err, data) {
         if(err){
-            cb(err);
-            return;
+            cb(err)
+            return
         }
-
-        var result = data;
-        if(options){
-            if (options['toJson']){
-                if (!options.toJson){
-                    cb(err, result);
-                    return;
-                }
-            }
-        }   
-        // parse the string into a json msg
-        result = JSON.parse(data);
-        cb(err, result);
-
-    }, latch);
+        var result = data
+        if (json) {
+            // parse the string into a json msg
+            result = JSON.parse(data)
+        }
+        cb(err, result)
+    }, latch)
 }
 
 

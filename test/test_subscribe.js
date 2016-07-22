@@ -29,13 +29,12 @@ suite('subscribe', function() {
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
             gazebo.unsubscribe('~/world_stats');
             var type = typeof d;
-            if(type === 'object'){
+            if(type === 'string'){
                 done();
             }else{
                 assert.fail('string', 'json', 'Returned a wrong type, return type not string', '!=');
             }
         },{'toJson': false});
-        gazebo.sim.spawn('box','box');
     });
 
     // Test with toJson set to false.
