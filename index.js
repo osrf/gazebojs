@@ -88,9 +88,8 @@ PosesFilter.prototype.addPosesStamped = function(posesStamped) {
 
     for(var i=0; i < posesStamped.pose.length; i++) {
         var pose = posesStamped.pose[i];
-        var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
+        var newMsg = {name:pose.name, time:newTime, position:pose.position, orientation:pose.orientation};
         var model = pose.id;
-
         var lastMsg = this.poseMap[model];
         var filtered = true;
 

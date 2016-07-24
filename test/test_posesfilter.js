@@ -37,12 +37,12 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 0
             poses0 += filtered.length
             if (poses > 100) {
-              // the test is done.
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              // no filtereing with default params
-              assert( poses == poses0)
-              done()
+                // the test is done.
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                // no filtereing with default params
+                assert( poses == poses0)
+                done()
             }
          })
     });
