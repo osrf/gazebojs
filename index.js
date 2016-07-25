@@ -20,6 +20,7 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 
+
 // the options determine how a message is filtered
 //  - timeElapsed: a message cannot be ignored if is older than this value
 //  - distance: a message cannot be ignored if translation is larger than this value
@@ -303,7 +304,11 @@ Gazebo.prototype.modelConfig = function(model_uri, cb){
     cb(null, conf);
 }
 
-Gazebo.prototype.topicsList = function(cb) {
+exports.connect = function (options ) {
+    return new Gazebo(options);
+}
+
+exports.topicsList = function(cb) {
     const child = exec('gz topic --l' , (error, stdout, stderr) => {
             if (error) {
                 throw error;
@@ -313,11 +318,6 @@ Gazebo.prototype.topicsList = function(cb) {
             }
         })
 }
-
-exports.connect = function (options ) {
-    return new Gazebo(options);
-}
-
 // test for publish
 // var gazebo = new ( require('./index')).Gazebo(); gazebo.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 

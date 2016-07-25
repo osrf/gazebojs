@@ -27,7 +27,7 @@ suite('deletion', function() {
 
     // Test reterival of topics list.
     test('Topics list reterival', function(done) {
-        gazebo.topicsList(function (e,d) {
+        gazebojs.topicsList(function (e,d) {
             if(typeof d === 'string'){
                 done();
             }else{
