@@ -64,6 +64,9 @@ suite('filter test using gzserver', function() {
               // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
+              for(var i = 0; i<filtered.length; i++){
+                    assert.notEqual(filtered[i].name, '')
+              }
               // some messages were filtered
               assert( poses1 < poses)
               done()
@@ -86,6 +89,9 @@ suite('filter test using gzserver', function() {
               // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
+              for(var i = 0; i<filtered.length; i++){
+                    assert.notEqual(filtered[i].name, '')
+              }
               // We always recives the first msg, which for the double pendlum contains 6 poses.
               assert.equal(poses1, 6)
               done()
@@ -108,6 +114,9 @@ suite('filter test using gzserver', function() {
               // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
+              for(var i = 0; i<filtered.length; i++){
+                    assert.notEqual(filtered[i].name, '')
+              }
               // some messages were filtered
               assert( poses1 < poses)
               done()
@@ -130,6 +139,9 @@ suite('filter test using gzserver', function() {
               // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
+              for(var i = 0; i<filtered.length; i++){
+                    assert.notEqual(filtered[i].name, '')
+              }
               // some messages were filtered
               assert( poses1 < poses)
               done()
@@ -152,6 +164,9 @@ suite('filter test using gzserver', function() {
               // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
+              for(var i = 0; i<filtered.length; i++){
+                    assert.notEqual(filtered[i].name, '')
+              }
               // no messages were filtered
               assert.equal(poses1, poses);
               done()
