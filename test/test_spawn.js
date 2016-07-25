@@ -34,7 +34,33 @@ suite('spawn', function() {
         gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
             gazebo.spawn('box', 'cube');
-        },1500);
+        },2000);
+    });
+
+    // Spawning a model
+    test('spawn a model with 5 arguments', function(done) {
+        gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
+            gazebo.unsubscribe('~/model/info');
+            assert(d.name === 'cube1');
+            done();
+        });
+        gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
+        setTimeout(()=>{
+            gazebo.spawn('box', 'cube1', 1, 1, 1);
+        },2000);
+    });
+
+    // Spawning a model
+    test('spawn a model with 8 arguments', function(done) {
+        gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
+            gazebo.unsubscribe('~/model/info');
+            assert(d.name === 'cube2');
+            done();
+        });
+        gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
+        setTimeout(()=>{
+            gazebo.spawn('box', 'cube2', 1, 0, 0, 0.1, 0.1, 1);
+        },2000);
     });
 
     suiteTeardown(function() {

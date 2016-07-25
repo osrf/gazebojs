@@ -144,15 +144,21 @@ Gazebo.prototype.pause = function() {
 /// \brief Event callback used for inserting models into the editor
 /// \param[in] type Type of model or model uri.
 /// \param[in] name Name of model.
-/// \param[in] pose (optional) Pose of the model as x,y,z,x,y,z (pos then rotation).
+/// \param[in] (optional) position of the model as x,y,z.
+/// \param[in] (optional) pose of the model as x,y,z,x,y,z (position then rotation).
 Gazebo.prototype.spawn = function(type, name) {
     var factoryMsg = 'gazebo.msgs.Factory';
     var newModelStr = {};
     var pos = {x: 0, y:0, z:0};
     var rpy = {x: 0, y:0, z:0};
 
-    if(arguments.length === 8)
+	if(arguments.length === 5)
     {
+        pos.x = arguments[2];
+        pos.y = arguments[3];
+        pos.z = arguments[4];
+    }
+    else if(arguments.length === 8){
         pos.x = arguments[2];
         pos.y = arguments[3];
         pos.z = arguments[4];
