@@ -25,13 +25,13 @@ suite('deletion', function() {
         }, 100);
     });
 
-    // Test reterival of topics list.
-    test('Topics list reterival', function(done) {
+    // Test retrieval of topics list.
+    test('Topics list retrieval', function(done) {
         gazebojs.topicsList(function (e,d) {
             if(typeof d === 'string'){
                 done();
             }else{
-                assert.fail(1, 2, 'Topics list not reterived', '!=');
+                assert.fail(1, 2, 'Topics list not retrieved', '!=');
             }
         });
     });
