@@ -37,7 +37,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 0
             poses0 += filtered.length
             if (poses > 100) {
-                // the test is done.
                 gazebo.unsubscribe('~/pose/info')
                 assert.equal(poses, filter.msgCount)
                 // no filtereing with default params
@@ -61,7 +60,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               for(var i = 0; i<filtered.length; i++){
@@ -87,7 +85,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               for(var i = 0; i<filtered.length; i++){
@@ -113,7 +110,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               for(var i = 0; i<filtered.length; i++){
@@ -139,7 +135,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               for(var i = 0; i<filtered.length; i++){
@@ -165,7 +160,6 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              // the test is done.
               gazebo.unsubscribe('~/pose/info')
               assert.equal(poses, filter.msgCount)
               for(var i = 0; i<filtered.length; i++){
