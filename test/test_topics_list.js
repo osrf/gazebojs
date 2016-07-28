@@ -4,7 +4,7 @@ var assert = require('assert'),
     gazebojs = require('../index');
 
 
-suite('deletion', function() {
+suite('topics list', function() {
 
     var gzserver;
     var gazebo;
