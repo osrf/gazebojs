@@ -43,23 +43,71 @@ suite('topics', function() {
     // Test receiving Joint msgs on joint topic.
     test('joint topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Joint', '~/joint', function(e,d){
-            assert(d.name != '');
+            assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/joint');
             done();
-        });
+        },{'toJson': false});
         setTimeout(()=>{
             gazebo.sim.spawn(pioneer2dx_uri, 'pioneer2dx');
-        },3500)     
+        },4500)     
     });
 
     // Test receiving PoseStamped msgs on pose/info.
     test('pose/info topic', function(done) {
         gazebo.subscribe('gazebo.msgs.PoseStamped', '~/pose/info', function(e,d){
-            assert(d.name != '');
+            assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/pose/info');
             done();
+        },{'toJson': false});
+    });
+
+    // Test response and request topics.
+    test('request and response topics test', function(done) {
+       gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
+            assert(d.response === 'success' && d.request === 'entity_delete');
+            gazebo.unsubscribe('~/response');
+            done();
         });
-        gazebo.sim.spawn(pioneer2dx_uri, 'pioneer2dx');
+       gazebo.deleteEntity('pioneer2dx');
+   });
+
+    // Test receiving Sensor msgs on sensor topic.
+    test('sensor topic', function(done) {
+        gazebo.subscribe('gazebo.msgs.Sensor', '~/sensor', function(e,d){
+            assert(d.name != 'kinect');
+            gazebo.unsubscribe('~/sensor');
+            done();
+        },{'toJson':false});
+        gazebo.sim.spawn(kinect_uri, 'kinect');
+    });
+
+    // Test receiving factory msgs on factory topic.
+    test('factory topic', function(done) {
+        gazebo.subscribe('gazebo.msgs.Factory', '~/factory', function(e,d){
+            assert(d.indexOf('hokuyo')!==-1);
+            gazebo.unsubscribe('~/factory');
+            done();
+        },{'toJson':false});
+        gazebo.sim.spawn(sensor_uri, 'hokuyo');
+    });
+
+    // Test receiving Visual msgs on visual topic.
+    test('visual topic', function(done) {
+        gazebo.subscribe('gazebo.msgs.Visual', '~/visual', function(e,d){
+            assert(d.indexOf('hokuyo')!==-1);
+            gazebo.unsubscribe('~/visual');
+            done();
+        },{'toJson':false});
+    });
+
+    // Test receiving Model msgs on model topic.
+    test('model info topic', function(done) {
+        gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
+            assert(d.name != 'cube_20k');
+            gazebo.unsubscribe('~/model/info');
+            done();
+        },{'toJson':false});
+        gazebo.sim.spawn(model_uri, 'cube_20k');
     });
 
     // Test receiving WorldControl msgs on joint world_control topic.
@@ -72,56 +120,6 @@ suite('topics', function() {
         });
         gazebo.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
     });
-
-    // Test receiving factory msgs on factory topic.
-    test('factory topic', function(done) {
-        gazebo.subscribe('gazebo.msgs.Factory', '~/factory', function(e,d){
-            assert(d.name != '');
-            gazebo.unsubscribe('~/factory');
-            done();
-        });
-        gazebo.sim.spawn(pioneer2dx_uri, 'pioneer2dx');
-    });
-
-    // Test receiving Visual msgs on visual topic.
-    test('visual topic', function(done) {
-        gazebo.subscribe('gazebo.msgs.Visual', '~/visual', function(e,d){
-            assert(d.name != '');
-            gazebo.unsubscribe('~/visual');
-            done();
-        });
-        gazebo.sim.spawn(sensor_uri, 'hokuyo');
-    });
-
-    // Test receiving Sensor msgs on sensor topic.
-    test('sensor topic', function(done) {
-        gazebo.subscribe('gazebo.msgs.Sensor', '~/sensor', function(e,d){
-            assert(d.name != '');
-            gazebo.unsubscribe('~/sensor');
-            done();
-        });
-        gazebo.sim.spawn(kinect_uri, 'kinect');
-    });
-
-    // Test receiving Model msgs on model topic.
-    test('model info topic', function(done) {
-        gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
-            assert(d.name != '');
-            gazebo.unsubscribe('~/model/info');
-            done();
-        });
-        gazebo.sim.spawn(model_uri, 'cube_20k');
-    });
-
-    // Test response and request topics.
-    test('request and response topics test', function(done) {
-       gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
-            assert(d.response === 'success' && d.request === 'entity_delete');
-            gazebo.unsubscribe('~/response');
-            done();
-        });
-       gazebo.deleteEntity('cube_20k');
-   });
 
     suiteTeardown(function() {
         console.log('suiteTeardown');
