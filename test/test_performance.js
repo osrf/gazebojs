@@ -1,7 +1,7 @@
-var assert = require('assert'),
-util = require('util'),
-spawn = require('child_process').spawn;
-gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 suite('performance', function() {
 
@@ -34,44 +34,22 @@ suiteSetup (function(done){
 
     // How fast can gazebojs process msgs from a certain topic.
     test('Reciving msgs', function(done) {
-        first = true;
         counter = 0;
         gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
             counter ++;
         });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-        });
-        gazebo.subscribe('gazebo.msgs.PosesStamped', '~/pose/info', function(e,d){
-            counter ++;
-            setTimeout(()=> {
-              var rate = counter/test_period_sec;
+        setTimeout(()=> {
+                var rate = counter/test_period_sec;
                 console.log(counter + ' messages received in ' + test_period_sec + ' seconds, ' + rate +' messages/sec')
                 gazebo.unsubscribe('~/pose/info');
                 // We would consider this a minimum rate for now, could be changed later.
-                if(rate < 450){
-                  assert.fail(rate,450,'msgs reciving rate too slow','<');
+                if(rate < 45){          
+                    assert.fail(rate,50,'msgs reciving rate too slow','<');
                 }
                 else{
-                done();
-                }            
-            }, test_period);
-        });
+                    done();
+                }        
+        }, test_period);
     });
 
       suiteTeardown(function() {
