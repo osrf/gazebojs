@@ -141,6 +141,91 @@ Gazebo.prototype.pause = function() {
    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
+/// \brief Event callback used for inserting models into the editor
+/// \param[in] type Type of model or model uri.
+/// \param[in] name Name of model.
+/// \param[in] (optional) position of the model as x,y,z.
+/// \param[in] (optional) pose of the model as x,y,z,x,y,z (position then rotation).
+Gazebo.prototype.spawn = function(type, name) {
+    var factoryMsg = 'gazebo.msgs.Factory';
+    var newModelStr = {};
+    var pos = {x: 0, y:0, z:0};
+    var rpy = {x: 0, y:0, z:0};
+
+	if(arguments.length === 5)
+    {
+        pos.x = arguments[2];
+        pos.y = arguments[3];
+        pos.z = arguments[4];
+    }
+    else if(arguments.length === 8){
+        pos.x = arguments[2];
+        pos.y = arguments[3];
+        pos.z = arguments[4];
+        rpy.x = arguments[5];
+        rpy.y = arguments[6];
+        rpy.z = arguments[7];
+    }
+
+    if(type === "box" || type === "sphere" || type === "cylinder")
+    {
+        var geom;
+        if (type === "box")
+        {
+          geom  = '<box>\n<size>1.0 1.0 1.0</size>\n</box>';
+        }
+        else if (type === "sphere")
+        {
+          geom  = '<sphere>\n<radius>0.5</radius>\n</sphere>';
+        }
+        else if (type === "cylinder")
+        {
+          geom  = '<cylinder>\n<radius>0.5</radius>\n<length>1.0</length>\n</cylinder>';
+    }
+    newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
+        + "\n<model name='" + name + "'>"
+        + "\n<pose>" + pos.x +" " + pos.y + " " + pos.z + " "
+                            + rpy.x + " " + rpy.y +" " + rpy.z + "</pose>"
+        + "\n<link name ='link'>"
+        +   "\n<inertial><mass>1.0</mass></inertial>"
+        +   "\n<collision name ='collision'>"
+        +     "\n<geometry>"
+        +        '\n' + geom 
+        +     "\n</geometry>"
+        + "\n</collision>"
+        +   "\n<visual name ='visual'>"
+        +     "\n<geometry>"
+        +       '\n' + geom 
+        +     "\n</geometry>"
+        +     "\n<material>"
+        +       "\n<script>"
+        +         "\n<uri>file://media/materials/scripts/gazebo.material"
+        +         "\n</uri>"
+        +         "\n<name>Gazebo/Grey</name>"
+        +       "\n</script>"
+        +     "\n</material>"
+        +   "\n</visual>"
+        + "\n</link>"
+        + "\n</model>"
+        + "\n</sdf>";
+  }
+  else
+  {
+    newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
+          + "<model name='" + name + "'>"
+          + "  <pose>" + pos.x + " " + pos.y + " "+ pos.z 
+                    + " " + rpy.x + " "   + rpy.y + " " + rpy.z + "</pose>"
+          + "  <include>"
+          + "    <uri>" + type + "</uri>"
+          + "  </include>"
+          + "</model>"
+          + "</sdf>";
+  }
+    var msg = {sdf:newModelStr};
+    // Spawn the model in the physics server
+    this.publish(factoryMsg,'~/factory',msg);
+};
+
 Gazebo.prototype.deleteEntity = function(name) {
     var type = 'gazebo.msgs.Request';
     var value = random.integer(1, 1000);
@@ -278,7 +363,6 @@ Gazebo.prototype.model = function(model_name, cb) {
         cb(null, str);
     });
 }
-
 
 Gazebo.prototype.readFile = function(model_uri) {
     var modelFile = this.sim.findFile(model_uri);
