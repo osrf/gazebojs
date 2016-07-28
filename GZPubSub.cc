@@ -205,7 +205,7 @@ void GZPubSub::Advertise(const FunctionCallbackInfo<Value>& args)
   {
     args.GetIsolate()->ThrowException(
       v8::String::NewFromUtf8(args.GetIsolate(),
-      "Wrong argument type. Topic String expect as an argument."));
+      "Wrong argument type. Type String expect as an argument."));
     return;
   }
 
@@ -213,21 +213,21 @@ void GZPubSub::Advertise(const FunctionCallbackInfo<Value>& args)
   {
     args.GetIsolate()->ThrowException(
       v8::String::NewFromUtf8(args.GetIsolate(),
-      "Wrong argument type. Type String expect as an argument."));
+      "Wrong argument type. Topic String expect as an argument."));
     return;
   }
 
   String::Utf8Value sarg0(args[0]->ToString());
-  std::string topic(*sarg0);
+  std::string type(*sarg0);
 
   String::Utf8Value sarg1(args[1]->ToString());
-  std::string type(*sarg1);
+  std::string topic(*sarg1);
 
   try
   {
     GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
     gazebo::transport::PublisherPtr p;
-    obj->gazebo->Advertise(topic.c_str(),type.c_str());
+    obj->gazebo->Advertise(type.c_str(),topic.c_str());
   }
   catch(PubSubException &x)
   {

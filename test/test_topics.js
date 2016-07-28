@@ -1,7 +1,7 @@
-var assert = require('assert'),
-util = require('util'),
-spawn = require('child_process').spawn;
-gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 var camera_uri = 'model://camera';
 var sensor_uri = 'model://hokuyo';

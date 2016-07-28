@@ -1,8 +1,8 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
-    exec = require('child_process').exec;
+const assert = require('assert')
+const  util = require('util')
+const  spawn = require('child_process').spawn
+const  gazebojs = require('../index')
+const exec = require('child_process').exec
 
 suite('adverise a topic test', function() {
 

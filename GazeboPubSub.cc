@@ -128,6 +128,7 @@ Publisher *GazeboPubSub::CreatePublisher(const char* _type, const char *_topic)
   Publisher *pub = new GzPublisher(this->node, _type, _topic);
   return pub;
 }
+
 /////////////////////////////////////////////////
 vector<string> GazeboPubSub::GetMaterials()
 {
@@ -144,7 +145,6 @@ vector<string> GazeboPubSub::GetMaterials()
   }
   return v;
 }
-
 
 /////////////////////////////////////////////////
 GazeboPubSub::GazeboPubSub()
