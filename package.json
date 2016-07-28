@@ -1,6 +1,6 @@
 {
   "name": "gazebojs",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "NodeJs bindings for the Gazebo 5 simulator (gazebosim.org)",
   "main": "index.js",
   "scripts": {
