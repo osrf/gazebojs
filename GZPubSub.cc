@@ -74,11 +74,11 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "subscriptions", Subscriptions);
   NODE_SET_PROTOTYPE_METHOD(tp1, "publish", Publish);
   NODE_SET_PROTOTYPE_METHOD(tp1, "materials", Materials);
-  NODE_SET_PROTOTYPE_METHOD(tp1, "spawn", Spawn);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelFile", ModelFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "modelConfig", ModelConfig);
   NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "advertise", Advertise);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "sdfVersion", SdfVersion);
 
   // export the template
   constructor.Reset(isolate, tp1->GetFunction());
@@ -239,74 +239,17 @@ void GZPubSub::Advertise(const FunctionCallbackInfo<Value>& args)
   args.GetReturnValue().SetUndefined();
 }
 
-/////////////////////////////////////////////////
-void GZPubSub::Spawn(const FunctionCallbackInfo<Value>& args)
-{
+///////////////////////////////////////////////
+void GZPubSub::SdfVersion(const v8::FunctionCallbackInfo<v8::Value>& args){
+
   HandleScope scope(args.GetIsolate());
 
-  // we expect one string argument
-  if ( (args.Length() < 2)  || (args.Length() > 8)  )
-  {
-     args.GetIsolate()->ThrowException(
-        v8::String::NewFromUtf8(args.GetIsolate(),
-        "Wrong number of arguments. 1 expected"));
-    return;
-  }
-
-  if (!args[0]->IsString())
-  {
-    args.GetIsolate()->ThrowException(
-       v8::String::NewFromUtf8(args.GetIsolate(),
-       "Wrong argument type. Type string expected as first argument."));
-    return;
-  }
-
-  if (!args[1]->IsString())
-  {
-    args.GetIsolate()->ThrowException(
-       v8::String::NewFromUtf8(args.GetIsolate(),
-       "Wrong argument type. Name string expected as first argument."));
-    return;
-  }
-
-  double pose[6];
-  for(unsigned int i = 0; i < 6; ++i)
-  {
-    // verify that arguments 3 to 8 are numbers or undefined
-    pose[i] = 0;
-    unsigned int argIndex = i +2;
-    if ((unsigned int)args.Length() > argIndex)
-    {
-      if (!args[argIndex]->IsNumber())
-      {
-        std::string msg = "Wrong argument type. Number expected for argument ";
-	msg += std::to_string(argIndex + 1);
-	msg += ".";
-        args.GetIsolate()->ThrowException(
-          v8::String::NewFromUtf8(args.GetIsolate(), msg.c_str()));
-        return;
-      }
-      pose[i] = args[argIndex]->ToNumber()->NumberValue();
-    }
-  }
-
-  String::Utf8Value sarg0(args[0]->ToString());
-  std::string type(*sarg0);
-  String::Utf8Value sarg1(args[1]->ToString());
-  std::string name(*sarg1);
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
-
-  obj->gazebo->SpawnModel(type.c_str(),
-			  name.c_str(),
-                          pose[0],
-                          pose[1],
-                          pose[2],
-                          pose[3],
-                          pose[4],
-                          pose[5]);
-  args.GetReturnValue().SetUndefined();
+  std::string version = obj->gazebo->GetSdfVer();
+  Local<Array> result_list = Array::New(args.GetIsolate());
+  result_list->Set(0,String::NewFromUtf8(args.GetIsolate(), version.c_str()));
+  args.GetReturnValue().Set(result_list);  
 }
-
 
 /////////////////////////////////////////////////
 void GZPubSub::Materials(const FunctionCallbackInfo<Value>& args)

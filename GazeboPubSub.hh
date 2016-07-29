@@ -63,15 +63,9 @@ namespace gzscript
     protected: virtual Publisher  *CreatePublisher(const char* type, const char *topic);
 
     public: void Advertise(const char *_type, const char *_topic);
-    
-    public: void SpawnModel(const char *_type,
-                         const char *_name,
-                         double x,
-                         double y,
-                         double z,
-                         double rx,
-                         double ry,
-                         double rz);
+
+    /// \brief: returns the sdf version.
+    public: std::string GetSdfVer();
 
     public: std::vector<std::string> GetMaterials();
 
@@ -80,9 +74,6 @@ namespace gzscript
 
     /// \brief Ogre material parser.
     private: gzweb::OgreMaterialParser *materialParser;
-
-    /// \brief lots of spawn
-    private: gazebo::transport::PublisherPtr factoryPub;
 
     /// \brief Pushlish advertise msgs.
     private: gazebo::transport::PublisherPtr advertisePub;

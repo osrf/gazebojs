@@ -32,7 +32,7 @@ suite('deletion', function() {
             gazebo.unsubscribe('~/response');
             done();
         });
-        gazebo.sim.spawn(model_uri, 'coke_can');
+        gazebo.spawn(model_uri, 'coke_can');
         setTimeout(()=>{
             gazebo.deleteEntity('coke_can');
         },2000)

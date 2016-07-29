@@ -43,18 +43,20 @@ suite('topics', function() {
     // Test receiving Joint msgs on joint topic.
     test('joint topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Joint', '~/joint', function(e,d){
+            console.log(d)
             assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/joint');
             done();
         },{'toJson': false});
         setTimeout(()=>{
-            gazebo.sim.spawn(pioneer2dx_uri, 'pioneer2dx');
+            gazebo.spawn(pioneer2dx_uri, 'pioneer2dx');
         },4500)     
     });
 
     // Test receiving PoseStamped msgs on pose/info.
     test('pose/info topic', function(done) {
         gazebo.subscribe('gazebo.msgs.PoseStamped', '~/pose/info', function(e,d){
+            console.log(d)
             assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/pose/info');
             done();
@@ -74,11 +76,12 @@ suite('topics', function() {
     // Test receiving Sensor msgs on sensor topic.
     test('sensor topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Sensor', '~/sensor', function(e,d){
+            console.log(d)
             assert(d.name != 'kinect');
             gazebo.unsubscribe('~/sensor');
             done();
         },{'toJson':false});
-        gazebo.sim.spawn(kinect_uri, 'kinect');
+        gazebo.spawn(kinect_uri, 'kinect');
     });
 
     // Test receiving factory msgs on factory topic.
@@ -88,12 +91,13 @@ suite('topics', function() {
             gazebo.unsubscribe('~/factory');
             done();
         },{'toJson':false});
-        gazebo.sim.spawn(sensor_uri, 'hokuyo');
+        gazebo.spawn(sensor_uri, 'hokuyo');
     });
 
     // Test receiving Visual msgs on visual topic.
     test('visual topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Visual', '~/visual', function(e,d){
+            console.log(d)
             assert(d.indexOf('hokuyo')!==-1);
             gazebo.unsubscribe('~/visual');
             done();
@@ -103,11 +107,12 @@ suite('topics', function() {
     // Test receiving Model msgs on model topic.
     test('model info topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
+            console.log(d)
             assert(d.name != 'cube_20k');
             gazebo.unsubscribe('~/model/info');
             done();
         },{'toJson':false});
-        gazebo.sim.spawn(model_uri, 'cube_20k');
+        gazebo.spawn(model_uri, 'cube_20k');
     });
 
     // Test receiving WorldControl msgs on joint world_control topic.
