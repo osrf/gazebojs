@@ -3,8 +3,8 @@
         "node": true
     },
     "extends": "eslint:recommended",
-	"parserOptions": {"ecmaVersion": 6},
-	"rules": {
+    "parserOptions": {"ecmaVersion": 6},
+    "rules": {
         "indent": [
             "error",
             4
@@ -14,8 +14,8 @@
             "unix"
         ],
         "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
-        "semi": 1,
-        "no-console":1,
+        "semi":1,
+        "no-console": 1,
         "no-undef": 0,
         "no-negated-in-lhs": 0
     }
