@@ -1,7 +1,7 @@
-var assert = require('assert'),
-    util = require('util'),
-    spawn = require('child_process').spawn;
-    gazebojs = require('../index');
+const assert = require('assert')
+const util = require('util')
+const spawn = require('child_process').spawn
+const gazebojs = require('../index')
 
 
 suite('topics list', function() {
@@ -28,7 +28,7 @@ suite('topics list', function() {
     // Test retrieval of topics list.
     test('Topics list retrieval', function(done) {
         gazebojs.topicsList(function (e,d) {
-            if(typeof d === 'string'){
+            if((typeof d === 'object') && (d.length > 0) && (typeof(d[0]) === 'string')){
                 done();
             }else{
                 assert.fail(1, 2, 'Topics list not retrieved', '!=');

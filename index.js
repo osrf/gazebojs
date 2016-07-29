@@ -313,8 +313,7 @@ exports.topicsList = function(cb) {
             if (error) {
                 throw error;
             }else{
-                console.log(stdout);
-                cb(null,stdout);
+                cb(null,stdout.split('/gazebo'));
             }
         })
 }
