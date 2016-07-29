@@ -13,11 +13,11 @@ let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
 var random = require("random-js")(); // uses the nativeMath engine
 
-var fs = require('fs')
+var fs = require('fs');
 // var Png = require('png').Png;
 // var Jpeg = require('jpeg').Jpeg;
-var path = require('path')
-var util = require('util')
+var path = require('path');
+var util = require('util');
 
 // the options determine how a message is filtered
 //  - timeElapsed: a message cannot be ignored if is older than this value
@@ -25,127 +25,127 @@ var util = require('util')
 //  - quaternion: a message cannot be ignored if the dot product of the quaternion
 //    is larger than this value.
 function PosesFilter (options) {
-    this.reset(options)
+    this.reset(options);
 }
 
 exports.PosesFilter = PosesFilter;
 
 PosesFilter.prototype.hasMoved = function(oldPosition, position, dist)
 {
-    var x = oldPosition.x - position.x
-    var y = oldPosition.y - position.y
-    var z = oldPosition.z - position.z
+    var x = oldPosition.x - position.x;
+    var y = oldPosition.y - position.y;
+    var z = oldPosition.z - position.z;
     var translation2 = x*x + y*y + z*z
-    return translation2 > (dist * dist)
+    return translation2 > (dist * dist);
 }
 
 PosesFilter.prototype.hasTurned = function(oldOrientation, orientation, quat)
 {
-    var dotProduct = oldOrientation.w * orientation.w
-    dotProduct += oldOrientation.x * orientation.x
-    dotProduct += oldOrientation.y * orientation.y
-    dotProduct += oldOrientation.z * orientation.z
-    var turn = Math.abs(1 - dotProduct) >  quat
-    return turn
+    var dotProduct = oldOrientation.w * orientation.w;
+    dotProduct += oldOrientation.x * orientation.x;
+    dotProduct += oldOrientation.y * orientation.y;
+    dotProduct += oldOrientation.z * orientation.z;
+    var turn = Math.abs(1 - dotProduct) >  quat;
+    return turn;
 }
 
 PosesFilter.prototype.isOld = function(oldTime, newTime, nsecs)
 {
-    var ds = newTime.sec - oldTime.sec
-    var dn = newTime.nsec - oldTime.nsec
-    var age = ds * 1e9 + dn
-    var old =  age >  nsecs
-    return old
+    var ds = newTime.sec - oldTime.sec;
+    var dn = newTime.nsec - oldTime.nsec;
+    var age = ds * 1e9 + dn;
+    var old =  age >  nsecs;
+    return old;
 }
 
 PosesFilter.prototype.reset = function(options) {
-    this.poseMap = {}
-    this.timeElapsed = 0
-    this.distance = 0
-    this.quaternion = 0
+    this.poseMap = {};
+    this.timeElapsed = 0;
+    this.distance = 0;
+    this.quaternion = 0;
     if(options) {
         if(options.timeElapsed) {
-            this.timeElapsed = options.timeElapsed
+            this.timeElapsed = options.timeElapsed;
 
         }
         if(options.distance) {
-            this.distance = options.distance
+            this.distance = options.distance;
         }
         if(options.quaternion) {
-            this.quaternion = options.quaternion
+            this.quaternion = options.quaternion;
         }
     }
-    // statistics
-    this.msgCount = 0
-    this.filteredCount = 0
+   // statistics
+   this.msgCount = 0;
+   this.filteredCount = 0;
 }
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
 
-    var unfilteredMsgs = []
-    var newTime = posesStamped.time
-    var nsec = 1e9 * this.timeElapsed
+    var unfilteredMsgs = [];
+    var newTime = posesStamped.time;
+    var nsec = 1e9 * this.timeElapsed;
 
     for(var i=0; i < posesStamped.pose.length; i++) {
-        var pose = posesStamped.pose[i]
-        var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation}
-        var model = pose.id
+        var pose = posesStamped.pose[i];
+        var newMsg = {time:newTime, position:pose.position, orientation:pose.orientation};
+        var model = pose.id;
 
-        var lastMsg = this.poseMap[model]
-        var filtered = true
+        var lastMsg = this.poseMap[model];
+        var filtered = true;
 
         if (lastMsg) {
-            var old = this.isOld(lastMsg.time, newMsg.time, nsec)
-            var far = this.hasMoved(lastMsg.position, newMsg.position, this.distance)
-            var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion)
+            var old = this.isOld(lastMsg.time, newMsg.time, nsec);
+            var far = this.hasMoved(lastMsg.position, newMsg.position, this.distance);
+            var twisted = this.hasTurned(lastMsg.orientation, newMsg.orientation, this.quaternion);
             // console.log(pose.name + ' old: ' + old + ' far:' + far + ' twist:' + twisted);
             if(old || far || twisted) {
-                filtered = false
+                filtered = false;
             }
         }
         if (!lastMsg || !filtered) {
-            this.poseMap[pose.id] = newMsg
-            unfilteredMsgs.push(newMsg)
+            this.poseMap[pose.id] = newMsg;
+            unfilteredMsgs.push(newMsg);
         }
         // stats
-        if(filtered)  this.filteredCount +=1
-        this.msgCount += 1
+        if(filtered)  this.filteredCount +=1;
+        this.msgCount += 1;
     }
-    return unfilteredMsgs
+    return unfilteredMsgs;
 }
 
 PosesFilter.prototype.stats = function() {
-    var p = 100 * (this.msgCount / this.filteredCount)
-    console.log( 'message compression:'+ p + '% (' + this.msgCount + ' total)' )
+    var p = 100 * (this.msgCount / this.filteredCount);
+    console.log( 'message compression:'+ p + '% (' + this.msgCount + ' total)' );
 }
 
 
 var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
    'RGBA_INT8', 'BGRA_INT8', 'RGB_INT16', 'RGB_INT32', 'BGR_INT8', 'BGR_INT16',
    'BGR_INT32', 'R_FLOAT16', 'RGB_FLOAT16', 'R_FLOAT32', 'RGB_FLOAT32',
-   'BAYER_RGGB8','BAYER_RGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8']
+   'BAYER_RGGB8','BAYER_RGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'];
 
 function Gazebo (options) {
-    this.sim = new gz.Sim()
+    this.sim = new gz.Sim();
 }
 
 exports.Gazebo = Gazebo;
 
 // Play the simulation.
 Gazebo.prototype.play = function() {
-    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false})
+    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:false});
 }
 
 // Pause the simulation.
 Gazebo.prototype.pause = function() {
-    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true})
+   this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
 Gazebo.prototype.deleteEntity = function(name) {
-    var type = 'gazebo.msgs.Request'
-    var value = random.integer(1, 1000)
-    var msg = {id:value, request:'entity_delete', data: name}
-    this.publish(type, '~/request', msg)
+    var type = 'gazebo.msgs.Request';
+    var value = random.integer(1, 1000);
+    var msg = {id:value, request:'entity_delete', data: name};
+    this.publish(type, '~/request', msg);
 }
 
 Gazebo.prototype.subscribe = function(type, topic, cb, options) {
@@ -195,84 +195,87 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             cb(err);
         }
         else {
-            var buffer = new Buffer(image_msg.image.data, 'base64')
-            if(format == 'png') {
-                var png = new PNG({
-                    width: image_msg.image.width,
-                    height: image_msg.image.height,
-                    bitDepth: 8,
-                    colorType: 6,
-                    inputHasAlpha: false
-                });
-                png.data = buffer
-
-                streamToBuffer(png.pack(), function (err, fileBuf) {
-                    cb(null, fileBuf)
-                })
-                return
-            }
-            // make a larger buffer for transparent layer
-            var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
-            var j=0
-            var i=0
-            //var pixData = image_msg.image.data
-            var pixData = buffer
-            while(i < rgbaBuffer.length){
-                rgbaBuffer[i++] = pixData[j++]
-                rgbaBuffer[i++] = pixData[j++]
-                rgbaBuffer[i++] = pixData[j++]
-                rgbaBuffer[i++] = 255 // alpha
-            }
-            var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
-                image.bitmap.data = rgbaBuffer
-                // image.write( 'jimp.jpg', console.log );
-                // image.write( 'jimp.png', console.log );
-                var datai;
-                if(format == 'jpeg') {
-                    image.quality(quality)
-                    image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
-                    // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
-                        cb(err, fileBuf)
-                    })
-                }
-                if(format == 'bmp') {
-                    image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
-                        cb(err, fileBuf)
-                    })
-                }
+          var buffer = new Buffer(image_msg.image.data, 'base64');
+          if(format == 'png') {
+            var png = new PNG({
+              width: image_msg.image.width,
+              height: image_msg.image.height,
+              bitDepth: 8,
+              colorType: 6,
+              inputHasAlpha: false
             });
+            png.data = buffer
+
+            streamToBuffer(png.pack(), function (err, fileBuf) {
+              cb(null, fileBuf)
+            })
+            return
+          }
+          // make a larger buffer for transparent layer
+          var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
+          var j=0
+          var i=0
+          //var pixData = image_msg.image.data
+          var pixData = buffer
+          while(i < rgbaBuffer.length){
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = pixData[j++]
+            rgbaBuffer[i++] = 255 // alpha
+          }
+          var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+            image.bitmap.data = rgbaBuffer
+            // image.write( 'jimp.jpg', console.log );
+            // image.write( 'jimp.png', console.log );
+            var datai;
+            if(format == 'jpeg') {
+              image.quality(quality)
+              image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
+                // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
+                cb(err, fileBuf)
+              })
+            }
+            if(format == 'bmp') {
+              image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
+                cb(err, fileBuf)
+              })
+            }
+          });
         }
     });
 }
 
 exports.pixel_format = function (nb) {
-    return gz_formats[nb]
+    return gz_formats[nb];
 }
 
+
+
+
 Gazebo.prototype.unsubscribe = function(topic) {
-    return this.sim.unsubscribe(topic)
+  return this.sim.unsubscribe(topic);
 }
 
 Gazebo.prototype.publish = function (type, topic, msg, options) {
-    var str = JSON.stringify(msg)
-    this.sim.publish(type, topic, str)
+    var str = JSON.stringify(msg);
+    this.sim.publish(type, topic, str);
 }
 
 Gazebo.prototype.model = function(model_name, cb) {
     if(!cb)
-        throw("No callback function specified to get sdf for: " + model_name)
+       throw("No callback function specified to get sdf for: " + model_name)
     var modelFile = this.sim.modelFile(model_name);
     fs.readFile(modelFile, function(err, data){
         if(err){
-            cb(err)
+            cb(err);
         }
         var str = '';
         if(data){
             // fs returns a Buffer, get a string instead
-            str = data.toString('utf8')
+            str = data.toString('utf8');
         }
         // serve it
-        cb(null, str)
+        cb(null, str);
     });
 }
 
@@ -289,15 +292,16 @@ Gazebo.prototype.readFile = function(model_uri) {
             cb(null, data);
         }
     });
+
 }
 
 Gazebo.prototype.modelConfig = function(model_uri, cb){
-    var p = this.sim.find_file(model_uri)
-    cb(null, conf)
+    var p = this.sim.find_file(model_uri);
+    cb(null, conf);
 }
 
 exports.connect = function (options ) {
-    return new Gazebo(options)
+    return new Gazebo(options);
 }
 
 // test for publish
