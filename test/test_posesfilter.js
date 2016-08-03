@@ -2,6 +2,7 @@ const assert = require('assert')
 const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
+const timing = require('./timing.js').fast
 
 suite('filter test using gzserver', function() {
 
@@ -10,7 +11,7 @@ suite('filter test using gzserver', function() {
     var timeout_period = 1000;
     var first = true;
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
         // console.log('suiteSetup');
@@ -22,7 +23,7 @@ suite('filter test using gzserver', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // default filter: not filtered.

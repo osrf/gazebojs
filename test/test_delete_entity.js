@@ -3,16 +3,16 @@ const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
 const  model_uri = 'model://coke_can'
+const timing = require('./timing.js').del
 
 suite('deletion', function() {
 
     var gzserver;
     var gazebo;
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
-
         // console.log('suiteSetup');
         gzserver = spawn('gzserver', ['--verbose']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
@@ -22,7 +22,7 @@ suite('deletion', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // Test deletion of an entity.
@@ -35,7 +35,7 @@ suite('deletion', function() {
         gazebo.spawn(model_uri, 'coke_can');
         setTimeout(()=>{
             gazebo.deleteEntity('coke_can');
-        },2000)
+        }, timing.cmd)
     });
 
     suiteTeardown(function() {

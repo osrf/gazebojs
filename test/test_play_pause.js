@@ -40,7 +40,7 @@ suite('play and pause test', function() {
         });
         setTimeout(()=>{
             gazebo.pause()
-        }, 10)
+        }, 500)
     });
 
     test('test play', function(done) {
