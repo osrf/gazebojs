@@ -312,10 +312,9 @@ exports.topicsList = function(cb) {
     const child = exec('gz topic --l' , (error, stdout, stderr) => {
             if (error) {
                 cb(null, error)
+            }else if(stderr){
+                cb(null, stderr);
             }else{
-                if(stderr){
-                    cb(null, stderr);
-                }
                 cb(null, stdout.split('/gazebo'));
             }
         })
