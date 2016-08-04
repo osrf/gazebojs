@@ -10,16 +10,6 @@ var pioneer2dx_uri = 'model://pioneer2dx';
 
 suite('topics', function() {
 
-    // Topics that are not tested yet.
-    // "~/link";
-    // "~/physics";
-    // "~/material";
-    // "~/heightmap_data";
-    // "~/model/modify";
-    // "~/roads";
-    // "~/factory/light";
-    // "~/light/modify";
-
     var gzserver;
     var gazebo;
 
