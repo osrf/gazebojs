@@ -2,13 +2,14 @@ const assert = require('assert')
 const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
+const timing = require('./timing.js').spawn
 
 suite('spawn', function() {
 
     var gzserver;
     var gazebo;
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
 
@@ -21,7 +22,7 @@ suite('spawn', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // Spawning a model
@@ -34,7 +35,7 @@ suite('spawn', function() {
         gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
             gazebo.spawn('box', 'cube');
-        },2000);
+        },timing.cmd);
     });
 
     // Spawning a model
@@ -47,7 +48,7 @@ suite('spawn', function() {
         gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
             gazebo.spawn('box', 'cube1', 1, 1, 1);
-        },2000);
+        },timing.cmd);
     });
 
     // Spawning a model
@@ -60,7 +61,7 @@ suite('spawn', function() {
         gazebo.sim.advertise('gazebo.msgs.Factory','~/factory')
         setTimeout(()=>{
             gazebo.spawn('box', 'cube2', 1, 0, 0, 0.1, 0.1, 1);
-        },2000);
+        },timing.cmd);
     });
 
     suiteTeardown(function() {
