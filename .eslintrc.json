@@ -1,0 +1,19 @@
+{
+    "env": {
+        "node": true
+    },
+    "extends": "eslint:recommended",
+	"parserOptions": {"ecmaVersion": 6},
+	"rules": {
+        "indent": 1,
+        "linebreak-style": [
+            "warn",
+            "unix"
+        ],
+        "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
+        "semi": 1,
+        "no-console":1,
+        "no-undef": 0,
+        "no-negated-in-lhs": 0
+    }
+}
