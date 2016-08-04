@@ -50,7 +50,6 @@ suite('topics list', function() {
 
     suiteTeardown(function() {
         console.log('suiteTeardown');
-        // gzserver.kill('SIGHUP');
     });
 
 });
