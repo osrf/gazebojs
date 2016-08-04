@@ -11,13 +11,15 @@ let gz = require('./build/Release/gazebo');
 let Jimp = require('jimp');
 let PNG = require('pngjs').PNG
 let streamToBuffer = require('stream-to-buffer')
-var random = require("random-js")(); // uses the nativeMath engine
+let random = require("random-js")() // uses the nativeMath engine
+let exec = require('child_process').exec
 
 var fs = require('fs');
 // var Png = require('png').Png;
 // var Jpeg = require('jpeg').Jpeg;
 var path = require('path');
 var util = require('util');
+
 
 // the options determine how a message is filtered
 //  - timeElapsed: a message cannot be ignored if is older than this value
@@ -385,6 +387,18 @@ Gazebo.prototype.modelConfig = function(model_uri, cb){
 
 exports.connect = function (options ) {
     return new Gazebo(options);
+}
+
+exports.topicsList = function(cb) {
+    const child = exec('gz topic --l' , (error, stdout, stderr) => {
+            if (error) {
+                cb(null, error)
+            }else if(stderr){
+                cb(stderr);
+            }else{
+                cb(null, stdout.split('/gazebo'));
+            }
+        })
 }
 
 // test for publish
