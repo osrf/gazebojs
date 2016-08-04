@@ -311,12 +311,16 @@ exports.connect = function (options ) {
 exports.topicsList = function(cb) {
     const child = exec('gz topic --l' , (error, stdout, stderr) => {
             if (error) {
-                throw error;
+                cb(null, error)
             }else{
-                cb(null,stdout.split('/gazebo'));
+                if(stderr){
+                    cb(null, stderr);
+                }
+                cb(null, stdout.split('/gazebo'));
             }
         })
 }
+
 // test for publish
 // var gazebo = new ( require('./index')).Gazebo(); gazebo.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 
