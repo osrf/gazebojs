@@ -2,13 +2,14 @@ const assert = require('assert')
 const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
+const timing = require('./timing.js').fast
 
 suite('subscribe', function() {
 
     var gzserver;
     var gazebo;
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
 
@@ -21,7 +22,7 @@ suite('subscribe', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // Test default subscribe.

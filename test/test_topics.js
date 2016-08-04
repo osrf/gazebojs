@@ -2,11 +2,10 @@ const assert = require('assert')
 const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
+const timing = require('./timing.js').del
 
-var camera_uri = 'model://camera';
 var sensor_uri = 'model://hokuyo';
 var model_uri = 'model://cube_20k';
-var kinect_uri = 'model://kinect';
 var pioneer2dx_uri = 'model://pioneer2dx'; 
 
 suite('topics', function() {
@@ -24,7 +23,7 @@ suite('topics', function() {
     var gzserver;
     var gazebo;
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
 
@@ -37,26 +36,25 @@ suite('topics', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // Test receiving Joint msgs on joint topic.
     test('joint topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Joint', '~/joint', function(e,d){
-            console.log(d)
             assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/joint');
             done();
         },{'toJson': false});
+        gazebo.sim.advertise('gazebo.msgs.Factory','~/factory') 
         setTimeout(()=>{
             gazebo.spawn(pioneer2dx_uri, 'pioneer2dx');
-        },4500)     
+        },timing.cmd)   
     });
 
     // Test receiving PoseStamped msgs on pose/info.
     test('pose/info topic', function(done) {
         gazebo.subscribe('gazebo.msgs.PoseStamped', '~/pose/info', function(e,d){
-            console.log(d)
             assert(d.indexOf('pioneer2dx')!==-1);
             gazebo.unsubscribe('~/pose/info');
             done();
@@ -70,19 +68,10 @@ suite('topics', function() {
             gazebo.unsubscribe('~/response');
             done();
         });
-       gazebo.deleteEntity('pioneer2dx');
+       setTimeout(()=>{
+            gazebo.deleteEntity('pioneer2dx');
+       },timing.cmd)  
    });
-
-    // Test receiving Sensor msgs on sensor topic.
-    test('sensor topic', function(done) {
-        gazebo.subscribe('gazebo.msgs.Sensor', '~/sensor', function(e,d){
-            console.log(d)
-            assert(d.name != 'kinect');
-            gazebo.unsubscribe('~/sensor');
-            done();
-        },{'toJson':false});
-        gazebo.spawn(kinect_uri, 'kinect');
-    });
 
     // Test receiving factory msgs on factory topic.
     test('factory topic', function(done) {
@@ -91,28 +80,40 @@ suite('topics', function() {
             gazebo.unsubscribe('~/factory');
             done();
         },{'toJson':false});
-        gazebo.spawn(sensor_uri, 'hokuyo');
+       setTimeout(()=>{
+            gazebo.spawn(sensor_uri, 'hokuyo');
+       },timing.cmd) 
     });
 
     // Test receiving Visual msgs on visual topic.
     test('visual topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Visual', '~/visual', function(e,d){
-            console.log(d)
             assert(d.indexOf('hokuyo')!==-1);
             gazebo.unsubscribe('~/visual');
             done();
         },{'toJson':false});
     });
 
+
+    // Test receiving Sensor msgs on sensor topic.
+    test('sensor topic', function(done) {
+        gazebo.subscribe('gazebo.msgs.Sensor', '~/sensor', function(e,d){
+            assert(d.indexOf('laser')!==-1);
+            gazebo.unsubscribe('~/sensor');
+            done();
+        },{'toJson':false}); 
+    });
+
     // Test receiving Model msgs on model topic.
     test('model info topic', function(done) {
         gazebo.subscribe('gazebo.msgs.Model', '~/model/info', function(e,d){
-            console.log(d)
-            assert(d.name != 'cube_20k');
+            assert(d.indexOf('cube_20k')!==-1);
             gazebo.unsubscribe('~/model/info');
             done();
         },{'toJson':false});
-        gazebo.spawn(model_uri, 'cube_20k');
+       setTimeout(()=>{
+            gazebo.spawn(model_uri, 'cube_20k');
+       },timing.cmd) 
     });
 
     // Test receiving WorldControl msgs on joint world_control topic.

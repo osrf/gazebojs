@@ -4,6 +4,8 @@ const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
 const exec = require('child_process').exec
 
+const timing = require('./timing.js').fast
+
 suite('adverise a topic test', function() {
 
     var gzserver;
@@ -11,10 +13,10 @@ suite('adverise a topic test', function() {
     var name = 'hello/world';
     var topic_name = '~/' + name;
     var msg_type = 'Factory';
-    
+
     var msg = {pause:true};
 
-    this.timeout(5000);
+    this.timeout(timing.test);
 
     suiteSetup (function(done){
 
@@ -27,7 +29,7 @@ suite('adverise a topic test', function() {
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // test to check if the topic was advertised correctly.

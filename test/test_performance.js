@@ -2,6 +2,7 @@ const assert = require('assert')
 const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
+const timing = require('./timing.js').perf
 
 suite('performance', function() {
 
@@ -10,13 +11,9 @@ suite('performance', function() {
 var gzserver;
 var gazebo;
 
-// Currently we are testing with 8 subscribers, more than that may require
-// a time period more than 4 seconds to avoid a (core dumped) error
-// [because gzserver didn't have the chance to unsubscribe].
-var test_period = 4000;
-var test_period_sec = test_period /1000;
+var test_period_sec = timing.test_period /1000;
 
-this.timeout(5000+test_period);
+this.timeout(timing.test + timing.test_period);
 
 suiteSetup (function(done){
 
@@ -29,7 +26,7 @@ suiteSetup (function(done){
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)
             done();
-        }, 100);
+        }, timing.spawn);
     });
 
     // How fast can gazebojs process msgs from a certain topic.
@@ -49,7 +46,7 @@ suiteSetup (function(done){
                 else{
                     done();
                 }
-        }, test_period);
+        }, timing.test_period);
     });
 
       suiteTeardown(function() {
