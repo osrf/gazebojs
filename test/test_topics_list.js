@@ -40,9 +40,9 @@ suite('topics list', function() {
     test('Topics list gz server not running', function(done) {
         gzserver.kill('SIGHUP');
         gazebojs.topicsList(function (e,d) {
-            if(d.indexOf('instance')!==-1){
+            if(e && e.indexOf('instance')!==-1){
                 done();
-            }else if(e){
+            }else{
                 assert.fail(1, 2, 'Topicslist with no gzserver doesnt return error', '!=');
             }
         });

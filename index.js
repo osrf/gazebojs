@@ -313,7 +313,7 @@ exports.topicsList = function(cb) {
             if (error) {
                 cb(null, error)
             }else if(stderr){
-                cb(null, stderr);
+                cb(stderr);
             }else{
                 cb(null, stdout.split('/gazebo'));
             }
