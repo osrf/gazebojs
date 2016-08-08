@@ -8,8 +8,6 @@ suite('filter test using gzserver', function() {
 
     var gzserver;
     var gazebo;
-    var timeout_period = 1000;
-    var first = true;
 
     this.timeout(timing.test);
 
@@ -44,7 +42,7 @@ suite('filter test using gzserver', function() {
                 assert( poses == poses0)
                 done()
             }
-         })
+        })
     });
 
     test('Heavy filter', function(done) {

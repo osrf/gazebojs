@@ -40,10 +40,10 @@ gazebo.subscribeToImageTopic(src_topic, function (err, img){
     var fname = dest_path + '_' + pad(savedFrames ++, 4) + '.' + options.format ;
 
     if (savedFrames <=  framesToSave)
-    fs.writeFile(fname, img, function (err) {
-        if(err)
-            throw err;
-        console.log(fname + ' saved');
+        fs.writeFile(fname, img, function (err) {
+            if(err)
+                throw err;
+            console.log(fname + ' saved');
     });
 }, options);
 

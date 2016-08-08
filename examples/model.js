@@ -18,5 +18,5 @@ sim.model( model_uri, function (err, data) {
     else{
         console.log('data: ' + typeof(data) );
         console.log(data);
-        }
-    });
+    }
+});

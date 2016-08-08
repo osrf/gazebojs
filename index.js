@@ -322,7 +322,7 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
                     image.quality(quality)
                     image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
                       // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
-                      cb(err, fileBuf)
+                        cb(err, fileBuf)
                     })
                 }
                 if(format == 'bmp') {
@@ -353,7 +353,7 @@ Gazebo.prototype.publish = function (type, topic, msg, options) {
 
 Gazebo.prototype.model = function(model_name, cb) {
     if(!cb)
-       throw("No callback function specified to get sdf for: " + model_name)
+        throw("No callback function specified to get sdf for: " + model_name)
     var modelFile = this.sim.modelFile(model_name);
     fs.readFile(modelFile, function(err, data){
         if(err){

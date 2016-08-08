@@ -26,17 +26,17 @@ suite('play and pause test', function() {
 
     test('test pause', function(done) {
         var first_check = false;
-	      gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
-	        if(d.pause){
-		          first_check = true;
-	        }
-	        gazebo.unsubscribe('~/world_control');
-        });
+	        gazebo.subscribe("gazebo.msgs.WorldControl", "~/world_control", function(e,d){
+    	        if(d.pause){
+    		          first_check = true;
+    	        }
+	            gazebo.unsubscribe('~/world_control');
+            });
 
         gazebo.subscribe("gazebo.msgs.WorldStatistics", "~/world_stats", function(e,d){
-          if(d.paused && first_check){
-              done();
-          }
+            if(d.paused && first_check){
+                done();
+            }
         });
         setTimeout(()=>{
             gazebo.pause()

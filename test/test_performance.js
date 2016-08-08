@@ -8,25 +8,25 @@ suite('performance', function() {
 
 // This test is to see how fast can we receive msgs from gzserver.
 
-var gzserver;
-var gazebo;
+    var gzserver;
+    var gazebo;
 
-var test_period_sec = timing.test_period /1000;
+    var test_period_sec = timing.test_period /1000;
 
-this.timeout(timing.test + timing.test_period);
+    this.timeout(timing.test + timing.test_period);
 
-suiteSetup (function(done){
+    suiteSetup (function(done){
 
-        // console.log('suiteSetup');
-        gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
-        gzserver.on('data', (data) => { console.log('gz: ' + data) })
-        // give a second for gzserver to come up
-        setTimeout(()=> {
-            gazebo = new gazebojs.Gazebo();
-            gazebo.proc = gzserver
-            console.log('sim pid: ' + gazebo.proc.pid)
-            done();
-        }, timing.spawn);
+            // console.log('suiteSetup');
+            gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
+            gzserver.on('data', (data) => { console.log('gz: ' + data) })
+            // give a second for gzserver to come up
+            setTimeout(()=> {
+                gazebo = new gazebojs.Gazebo();
+                gazebo.proc = gzserver
+                console.log('sim pid: ' + gazebo.proc.pid)
+                done();
+            }, timing.spawn);
     });
 
     // How fast can gazebojs process msgs from a certain topic.
@@ -49,9 +49,9 @@ suiteSetup (function(done){
         }, timing.test_period);
     });
 
-      suiteTeardown(function() {
+    suiteTeardown(function() {
         console.log('suiteTeardown');
         gzserver.kill('SIGHUP');
-      });
+    });
 
 });

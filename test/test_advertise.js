@@ -40,9 +40,9 @@ suite('adverise a topic test', function() {
                 throw error;
             }
             if(stdout.indexOf(name)!==-1){
-                    done();
+                done();
             }else{
-                    assert.fail(1, 2, 'topic not found' + topic_name , '>');
+                assert.fail(1, 2, 'topic not found' + topic_name , '>');
             }
         });
     });
