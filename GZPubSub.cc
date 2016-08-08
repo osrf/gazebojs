@@ -79,6 +79,7 @@ void GZPubSub::Init(Handle<Object> exports)
   NODE_SET_PROTOTYPE_METHOD(tp1, "findFile", FindFile);
   NODE_SET_PROTOTYPE_METHOD(tp1, "advertise", Advertise);
   NODE_SET_PROTOTYPE_METHOD(tp1, "sdfVersion", SdfVersion);
+  NODE_SET_PROTOTYPE_METHOD(tp1, "GazeboPaths", GazeboPaths);
 
   // export the template
   constructor.Reset(isolate, tp1->GetFunction());
@@ -259,6 +260,21 @@ void GZPubSub::Materials(const FunctionCallbackInfo<Value>& args)
   GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
   // this function is not asynchronous, but it could (should?) be.
   std::vector<std::string> msgs = obj->gazebo->GetMaterials();
+  Local<Array> result_list = Array::New(args.GetIsolate());
+  for (unsigned int i = 0; i < msgs.size(); ++i) {
+    result_list->Set(i, String::NewFromUtf8(args.GetIsolate(), msgs[i].c_str()));
+  }
+  args.GetReturnValue().Set(result_list);
+}
+
+/////////////////////////////////////////////////
+void GZPubSub::GazeboPaths(const FunctionCallbackInfo<Value>& args)
+{
+  HandleScope scope(args.GetIsolate());
+
+  GZPubSub* obj = ObjectWrap::Unwrap<GZPubSub>(args.Holder());
+  // this function is not asynchronous, but it could (should?) be.
+  std::vector<std::string> msgs = obj->gazebo->GetGazeboPaths();
   Local<Array> result_list = Array::New(args.GetIsolate());
   for (unsigned int i = 0; i < msgs.size(); ++i) {
     result_list->Set(i, String::NewFromUtf8(args.GetIsolate(), msgs[i].c_str()));

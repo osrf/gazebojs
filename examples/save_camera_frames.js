@@ -13,9 +13,9 @@ function pad(num, size) {
 
 if (process.argv.length != 6)
 {
-  console.log('node save_camera_frames.js [source camera name] [dest_path] [format] [count]')
-  console.log('  ex: node save_camera_frames.js camera out jpeg 5')
-  process.exit(-1);
+    console.log('node save_camera_frames.js [source camera name] [dest_path] [format] [count]')
+    console.log('  ex: node save_camera_frames.js camera out jpeg 5')
+    process.exit(-1);
 }
 
 var gazebo = new gazebojs.Gazebo()
@@ -34,24 +34,24 @@ console.log('saving [' + src_topic + '] to  [' + dest_path + '] for ' + framesTo
 
 options = {format:format}
 gazebo.subscribeToImageTopic(src_topic, function (err, img){
-  if(err) {
-      throw err
-  }
-  var fname = dest_path + '_' + pad(savedFrames ++, 4) + '.' + options.format ;
+    if(err) {
+        throw err
+    }
+    var fname = dest_path + '_' + pad(savedFrames ++, 4) + '.' + options.format ;
 
-  if (savedFrames <=  framesToSave)
-  fs.writeFile(fname, img, function (err) {
-      if(err)
-          throw err;
-      console.log(fname + ' saved');
-  });
+    if (savedFrames <=  framesToSave)
+    fs.writeFile(fname, img, function (err) {
+        if(err)
+            throw err;
+        console.log(fname + ' saved');
+    });
 }, options);
 
 
 
 console.log('setup a loop with 5 sec interval tick');
 setInterval(function (){
-  console.log('tick ' + gazebo);
+    console.log('tick ' + gazebo);
 },5000);
 
 

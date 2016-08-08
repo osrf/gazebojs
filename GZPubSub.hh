@@ -93,6 +93,9 @@ namespace gzscript
     /// \brief Gets the list of Materials
     private: static void Materials(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+    /// \brief Gets the list of Paths
+    private: static void GazeboPaths(const v8::FunctionCallbackInfo<v8::Value>& args);
+
     private: static void Publish(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     /// \brief Pushlish advertise msgs.

@@ -12,11 +12,11 @@ if ( process.argv.length != 3 ) {
 console.log('information for model: ' + model_uri + '\n');
 
 sim.model( model_uri, function (err, data) {
-        if(err){
-            console.log('Error: ' + err);
+    if(err){
+        console.log('Error: ' + err);
+    }
+    else{
+        console.log('data: ' + typeof(data) );
+        console.log(data);
         }
-        else {
-            console.log('data: ' + typeof(data) );
-            console.log(data);
-       }
-    }); 
+    });

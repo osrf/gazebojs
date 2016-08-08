@@ -75,9 +75,9 @@ PosesFilter.prototype.reset = function(options) {
             this.quaternion = options.quaternion;
         }
     }
-   // statistics
-   this.msgCount = 0;
-   this.filteredCount = 0;
+    // statistics
+    this.msgCount = 0;
+    this.filteredCount = 0;
 }
 
 PosesFilter.prototype.addPosesStamped = function(posesStamped) {
@@ -137,8 +137,14 @@ Gazebo.prototype.play = function() {
 
 // Pause the simulation.
 Gazebo.prototype.pause = function() {
-   this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
+    this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
+
+// Get gazebo paths.
+Gazebo.prototype.gazeboPaths = function(cb) {
+    cb(null, this.sim.GazeboPaths());
+}
+
 
 /// \brief Event callback used for inserting models into the editor
 /// \param[in] type Type of model or model uri.
@@ -151,7 +157,7 @@ Gazebo.prototype.spawn = function(type, name) {
     var pos = {x: 0, y:0, z:0};
     var rpy = {x: 0, y:0, z:0};
 
-	if(arguments.length === 5)
+    if(arguments.length === 5)
     {
         pos.x = arguments[2];
         pos.y = arguments[3];
@@ -171,46 +177,46 @@ Gazebo.prototype.spawn = function(type, name) {
         var geom;
         if (type === "box")
         {
-          geom  = '<box>\n<size>1.0 1.0 1.0</size>\n</box>';
+            geom  = '<box>\n<size>1.0 1.0 1.0</size>\n</box>';
         }
         else if (type === "sphere")
         {
-          geom  = '<sphere>\n<radius>0.5</radius>\n</sphere>';
+            geom  = '<sphere>\n<radius>0.5</radius>\n</sphere>';
         }
         else if (type === "cylinder")
         {
-          geom  = '<cylinder>\n<radius>0.5</radius>\n<length>1.0</length>\n</cylinder>';
+            geom  = '<cylinder>\n<radius>0.5</radius>\n<length>1.0</length>\n</cylinder>';
+        }
+        newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
+          + "\n<model name='" + name + "'>"
+          + "\n<pose>" + pos.x +" " + pos.y + " " + pos.z + " "
+                              + rpy.x + " " + rpy.y +" " + rpy.z + "</pose>"
+          + "\n<link name ='link'>"
+          +   "\n<inertial><mass>1.0</mass></inertial>"
+          +   "\n<collision name ='collision'>"
+          +     "\n<geometry>"
+          +        '\n' + geom 
+          +     "\n</geometry>"
+          + "\n</collision>"
+          +   "\n<visual name ='visual'>"
+          +     "\n<geometry>"
+          +       '\n' + geom 
+          +     "\n</geometry>"
+          +     "\n<material>"
+          +       "\n<script>"
+          +         "\n<uri>file://media/materials/scripts/gazebo.material"
+          +         "\n</uri>"
+          +         "\n<name>Gazebo/Grey</name>"
+          +       "\n</script>"
+          +     "\n</material>"
+          +   "\n</visual>"
+          + "\n</link>"
+          + "\n</model>"
+          + "\n</sdf>";
     }
-    newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
-        + "\n<model name='" + name + "'>"
-        + "\n<pose>" + pos.x +" " + pos.y + " " + pos.z + " "
-                            + rpy.x + " " + rpy.y +" " + rpy.z + "</pose>"
-        + "\n<link name ='link'>"
-        +   "\n<inertial><mass>1.0</mass></inertial>"
-        +   "\n<collision name ='collision'>"
-        +     "\n<geometry>"
-        +        '\n' + geom 
-        +     "\n</geometry>"
-        + "\n</collision>"
-        +   "\n<visual name ='visual'>"
-        +     "\n<geometry>"
-        +       '\n' + geom 
-        +     "\n</geometry>"
-        +     "\n<material>"
-        +       "\n<script>"
-        +         "\n<uri>file://media/materials/scripts/gazebo.material"
-        +         "\n</uri>"
-        +         "\n<name>Gazebo/Grey</name>"
-        +       "\n</script>"
-        +     "\n</material>"
-        +   "\n</visual>"
-        + "\n</link>"
-        + "\n</model>"
-        + "\n</sdf>";
-  }
-  else
-  {
-    newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
+    else
+    {
+        newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
           + "<model name='" + name + "'>"
           + "  <pose>" + pos.x + " " + pos.y + " "+ pos.z 
                     + " " + rpy.x + " "   + rpy.y + " " + rpy.z + "</pose>"
@@ -219,7 +225,7 @@ Gazebo.prototype.spawn = function(type, name) {
           + "  </include>"
           + "</model>"
           + "</sdf>";
-  }
+    }
     var msg = {sdf:newModelStr};
     // Spawn the model in the physics server
     this.publish(factoryMsg,'~/factory',msg);
@@ -279,52 +285,52 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
             cb(err);
         }
         else {
-          var buffer = new Buffer(image_msg.image.data, 'base64');
-          if(format == 'png') {
-            var png = new PNG({
-              width: image_msg.image.width,
-              height: image_msg.image.height,
-              bitDepth: 8,
-              colorType: 6,
-              inputHasAlpha: false
-            });
-            png.data = buffer
+            var buffer = new Buffer(image_msg.image.data, 'base64');
+            if(format == 'png') {
+                var png = new PNG({
+                    width: image_msg.image.width,
+                    height: image_msg.image.height,
+                    bitDepth: 8,
+                    colorType: 6,
+                    inputHasAlpha: false
+                });
+                png.data = buffer
 
-            streamToBuffer(png.pack(), function (err, fileBuf) {
-              cb(null, fileBuf)
-            })
-            return
-          }
-          // make a larger buffer for transparent layer
-          var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
-          var j=0
-          var i=0
-          //var pixData = image_msg.image.data
-          var pixData = buffer
-          while(i < rgbaBuffer.length){
-            rgbaBuffer[i++] = pixData[j++]
-            rgbaBuffer[i++] = pixData[j++]
-            rgbaBuffer[i++] = pixData[j++]
-            rgbaBuffer[i++] = 255 // alpha
-          }
-          var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
-            image.bitmap.data = rgbaBuffer
-            // image.write( 'jimp.jpg', console.log );
-            // image.write( 'jimp.png', console.log );
-            var datai;
-            if(format == 'jpeg') {
-              image.quality(quality)
-              image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
-                // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
-                cb(err, fileBuf)
-              })
+                streamToBuffer(png.pack(), function (err, fileBuf) {
+                    cb(null, fileBuf)
+                })
+                return
             }
-            if(format == 'bmp') {
-              image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
-                cb(err, fileBuf)
-              })
+            // make a larger buffer for transparent layer
+            var rgbaBuffer = new Buffer(image_msg.image.width * image_msg.image.height * 4)
+            var j=0
+            var i=0
+            //var pixData = image_msg.image.data
+            var pixData = buffer
+            while(i < rgbaBuffer.length){
+                rgbaBuffer[i++] = pixData[j++]
+                rgbaBuffer[i++] = pixData[j++]
+                rgbaBuffer[i++] = pixData[j++]
+                rgbaBuffer[i++] = 255 // alpha
             }
-          });
+            var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+                image.bitmap.data = rgbaBuffer
+                // image.write( 'jimp.jpg', console.log );
+                // image.write( 'jimp.png', console.log );
+                var datai;
+                if(format == 'jpeg') {
+                    image.quality(quality)
+                    image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
+                      // fs.writeFile('jimpx.jpeg', fileBuf, console.log)
+                      cb(err, fileBuf)
+                    })
+                }
+                if(format == 'bmp') {
+                    image.getBuffer(Jimp.MIME_BMP, function(err, fileBuf) {
+                        cb(err, fileBuf)
+                    })
+                }
+            });
         }
     });
 }
@@ -337,7 +343,7 @@ exports.pixel_format = function (nb) {
 
 
 Gazebo.prototype.unsubscribe = function(topic) {
-  return this.sim.unsubscribe(topic);
+    return this.sim.unsubscribe(topic);
 }
 
 Gazebo.prototype.publish = function (type, topic, msg, options) {
