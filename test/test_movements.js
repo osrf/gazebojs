@@ -1,5 +1,4 @@
 const assert = require('assert')
-const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
 const timing = require('./timing.js').move
@@ -18,6 +17,7 @@ suite('movement', function() {
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
         setTimeout(()=> {
+
             gazebo = new gazebojs.Gazebo();
             gazebo.proc = gzserver
             console.log('sim pid: ' + gazebo.proc.pid)

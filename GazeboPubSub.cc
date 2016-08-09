@@ -24,6 +24,7 @@
 #include "json2pb.h"
 
 #include <gazebo/common/SystemPaths.hh>
+#include <gazebo/msgs/msgs.hh>
 
 #define MAX_NUM_MSG_SIZE 1000
 
@@ -145,6 +146,22 @@ vector<string> GazeboPubSub::GetMaterials()
   }
   return v;
 }
+
+/////////////////////////////////////////////////
+vector<string> GazeboPubSub::GetGazeboPaths()
+{
+
+  vector<string> v;
+
+  std::list<std::string> paths = gazebo::common::SystemPaths::Instance()->GetGazeboPaths();
+  for(std::list<std::string>::iterator it= paths.begin(); it != paths.end(); it++)
+  {
+    string path = *it;
+    v.push_back(path);
+  }
+  return v;
+}
+
 
 /////////////////////////////////////////////////
 GazeboPubSub::GazeboPubSub()

@@ -5,15 +5,16 @@
     "extends": "eslint:recommended",
 	"parserOptions": {"ecmaVersion": 6},
 	"rules": {
-        "indent": 1,
+        "indent": 2,
         "linebreak-style": [
             "warn",
             "unix"
         ],
-        "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
-        "semi": 1,
-        "no-console":1,
+        "no-unused-vars": 1,
+        "semi": 0,
+        "no-console": 1,
         "no-undef": 0,
-        "no-negated-in-lhs": 0
+        "no-negated-in-lhs": 0,
+        "no-mixed-spaces-and-tabs": 1
     }
 }

@@ -4,10 +4,9 @@ var gazebo = new gazebojs.Gazebo();
 
 if (process.argv.length != 5)
 {
-  console.log('node publish.js [msg type] [topic name] [message]');
-  console.log('ex:\nnode publish.js "gazebo.msgs.WorldControl"  "~/world_control" "{\\\"pause\\\": true}"\n');
- 
-  process.exit(-1);
+    console.log('node publish.js [msg type] [topic name] [message]');
+    console.log('ex:\nnode publish.js "gazebo.msgs.WorldControl"  "~/world_control" "{\\\"pause\\\": true}"\n');
+    process.exit(-1);
 }
 
 
@@ -25,8 +24,8 @@ gazebo.publish(type, topic , msg);
 console.log('\npublished!');
 
 setInterval(function (){
-  console.log("bye");
-  process.exit(0);
+    console.log("bye");
+    process.exit(0);
 },3000);
 
 
