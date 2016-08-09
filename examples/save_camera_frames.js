@@ -44,7 +44,7 @@ gazebo.subscribeToImageTopic(src_topic, function (err, img){
             if(err)
                 throw err;
             console.log(fname + ' saved');
-    });
+        });
 }, options);
 
 

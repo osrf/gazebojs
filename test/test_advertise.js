@@ -1,5 +1,4 @@
 const assert = require('assert')
-const  util = require('util')
 const  spawn = require('child_process').spawn
 const  gazebojs = require('../index')
 const exec = require('child_process').exec
@@ -14,13 +13,10 @@ suite('adverise a topic test', function() {
     var topic_name = '~/' + name;
     var msg_type = 'Factory';
 
-    var msg = {pause:true};
-
     this.timeout(timing.test);
 
     suiteSetup (function(done){
 
-        // console.log('suiteSetup');
         gzserver = spawn('gzserver', ['--verbose']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
@@ -35,7 +31,7 @@ suite('adverise a topic test', function() {
     // test to check if the topic was advertised correctly.
     test('test adverise', function(done) {
         gazebo.sim.advertise(msg_type, topic_name);
-        const child = exec('gz topic --l' , (error, stdout, stderr) => {
+        exec('gz topic --l' , (error, stdout) => {
             if (error) {
                 throw error;
             }

@@ -1,12 +1,11 @@
 const assert = require('assert')
-const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
 const timing = require('./timing.js').del
 
-var sensor_uri = 'model://hokuyo';
-var model_uri = 'model://cube_20k';
-var pioneer2dx_uri = 'model://pioneer2dx'; 
+const sensor_uri = 'model://hokuyo'
+const model_uri = 'model://cube_20k'
+const pioneer2dx_uri = 'model://pioneer2dx'
 
 suite('topics', function() {
 
@@ -17,7 +16,6 @@ suite('topics', function() {
 
     suiteSetup (function(done){
 
-        // console.log('suiteSetup');
         gzserver = spawn('gzserver', ['--verbose']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
@@ -53,15 +51,15 @@ suite('topics', function() {
 
     // Test response and request topics.
     test('request and response topics test', function(done) {
-       gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
+        gazebo.subscribe('gazebo.msgs.Response', '~/response', function(e,d){
             assert(d.response === 'success' && d.request === 'entity_delete');
             gazebo.unsubscribe('~/response');
             done();
         });
-       setTimeout(()=>{
+        setTimeout(()=>{
             gazebo.deleteEntity('pioneer2dx');
-       },timing.cmd)  
-   });
+        },timing.cmd)  
+    });
 
     // Test receiving factory msgs on factory topic.
     test('factory topic', function(done) {
@@ -70,9 +68,9 @@ suite('topics', function() {
             gazebo.unsubscribe('~/factory');
             done();
         },{'toJson':false});
-       setTimeout(()=>{
+        setTimeout(()=>{
             gazebo.spawn(sensor_uri, 'hokuyo');
-       },timing.cmd) 
+        },timing.cmd) 
     });
 
     // Test receiving Visual msgs on visual topic.
@@ -101,9 +99,9 @@ suite('topics', function() {
             gazebo.unsubscribe('~/model/info');
             done();
         },{'toJson':false});
-       setTimeout(()=>{
+        setTimeout(()=>{
             gazebo.spawn(model_uri, 'cube_20k');
-       },timing.cmd) 
+        },timing.cmd) 
     });
 
     // Test receiving WorldControl msgs on joint world_control topic.

@@ -1,5 +1,4 @@
 const assert = require('assert')
-const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
 const timing = require('./timing.js').fast
@@ -12,7 +11,7 @@ suite('filter test using gzserver', function() {
     this.timeout(timing.test);
 
     suiteSetup (function(done){
-        // console.log('suiteSetup');
+
         gzserver = spawn('gzserver', [ __dirname + '/../examples/pendulum_cam.world']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
@@ -59,17 +58,17 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              for(var i = 0; i<filtered.length; i++){
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                for(var i = 0; i<filtered.length; i++){
                     assert(typeof filtered[i].name == 'string')
                     assert(filtered[i].name.length > 0)
-              }
-              // some messages were filtered
-              assert( poses1 < poses)
-              done()
+                }
+                // some messages were filtered
+                assert( poses1 < poses)
+                done()
             }
-         })
+        })
     });
 
     // no msgs should pass throught.
@@ -84,17 +83,17 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              for(var i = 0; i<filtered.length; i++){
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                for(var i = 0; i<filtered.length; i++){
                     assert(typeof filtered[i].name == 'string')
                     assert(filtered[i].name.length > 0)
-              }
-              // We always recives the first msg, which for the double pendlum contains 6 poses.
-              assert.equal(poses1, 6)
-              done()
+                }
+                // We always recives the first msg, which for the double pendlum contains 6 poses.
+                assert.equal(poses1, 6)
+                done()
             }
-         })
+        })
     });
 
     // distance filter.
@@ -109,17 +108,17 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              for(var i = 0; i<filtered.length; i++){
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                for(var i = 0; i<filtered.length; i++){
                     assert(typeof filtered[i].name == 'string')
                     assert(filtered[i].name.length > 0)
-              }
-              // some messages were filtered
-              assert( poses1 < poses)
-              done()
+                }
+                // some messages were filtered
+                assert( poses1 < poses)
+                done()
             }
-         })
+        })
     });
 
     // Rotation filter.
@@ -134,17 +133,17 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              for(var i = 0; i<filtered.length; i++){
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                for(var i = 0; i<filtered.length; i++){
                     assert(typeof filtered[i].name == 'string')
                     assert(filtered[i].name.length > 0)
-              }
-              // some messages were filtered
-              assert( poses1 < poses)
-              done()
+                }
+                // some messages were filtered
+                assert( poses1 < poses)
+                done()
             }
-         })
+        })
     });
 
     // time too short, no messages were filtered.
@@ -159,22 +158,22 @@ suite('filter test using gzserver', function() {
             // messages passing through filter 1
             poses1 += filtered.length
             if (poses > 100) {
-              gazebo.unsubscribe('~/pose/info')
-              assert.equal(poses, filter.msgCount)
-              for(var i = 0; i<filtered.length; i++){
+                gazebo.unsubscribe('~/pose/info')
+                assert.equal(poses, filter.msgCount)
+                for(var i = 0; i<filtered.length; i++){
                     assert(typeof filtered[i].name == 'string')
                     assert(filtered[i].name.length > 0)
-              }
-              // no messages were filtered
-              assert.equal(poses1, poses);
-              done()
+                }
+                // no messages were filtered
+                assert.equal(poses1, poses);
+                done()
             }
-         })
+        })
     });
 
-      suiteTeardown(function() {
+    suiteTeardown(function() {
         console.log('suiteTeardown');
         gzserver.kill('SIGHUP');
-      });
+    });
 
 });

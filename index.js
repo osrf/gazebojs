@@ -16,8 +16,8 @@ var random = require("random-js")(); // uses the nativeMath engine
 var fs = require('fs');
 // var Png = require('png').Png;
 // var Jpeg = require('jpeg').Jpeg;
-var path = require('path');
-var util = require('util');
+// var path = require('path');
+// var util = require('util');
 
 // the options determine how a message is filtered
 //  - timeElapsed: a message cannot be ignored if is older than this value
@@ -124,7 +124,7 @@ var gz_formats = ['UNKNOWN_PIXEL_FORMAT', 'L_INT8', 'L_INT16', 'RGB_INT8',
    'BGR_INT32', 'R_FLOAT16', 'RGB_FLOAT16', 'R_FLOAT32', 'RGB_FLOAT32',
    'BAYER_RGGB8','BAYER_RGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'];
 
-function Gazebo (options) {
+function Gazebo () {
     this.sim = new gz.Sim();
 }
 
@@ -313,11 +313,10 @@ Gazebo.prototype.subscribeToImageTopic = function(topic, cb , options) {
                 rgbaBuffer[i++] = pixData[j++]
                 rgbaBuffer[i++] = 255 // alpha
             }
-            var x = new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
+            new Jimp(image_msg.image.width, image_msg.image.height, function (err, image) {
                 image.bitmap.data = rgbaBuffer
                 // image.write( 'jimp.jpg', console.log );
                 // image.write( 'jimp.png', console.log );
-                var datai;
                 if(format == 'jpeg') {
                     image.quality(quality)
                     image.getBuffer(Jimp.MIME_JPEG, function(err, fileBuf) {
@@ -346,7 +345,7 @@ Gazebo.prototype.unsubscribe = function(topic) {
     return this.sim.unsubscribe(topic);
 }
 
-Gazebo.prototype.publish = function (type, topic, msg, options) {
+Gazebo.prototype.publish = function (type, topic, msg) {
     var str = JSON.stringify(msg);
     this.sim.publish(type, topic, str);
 }
@@ -375,7 +374,6 @@ Gazebo.prototype.readFile = function(model_uri) {
         if(err){
             cb(err);
         }
-        var str = '';
         if(data){
             // serve it as a buffer
             cb(null, data);
@@ -385,7 +383,7 @@ Gazebo.prototype.readFile = function(model_uri) {
 }
 
 Gazebo.prototype.modelConfig = function(model_uri, cb){
-    var p = this.sim.find_file(model_uri);
+    this.sim.find_file(model_uri);
     cb(null, conf);
 }
 

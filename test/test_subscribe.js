@@ -1,5 +1,4 @@
 const assert = require('assert')
-const util = require('util')
 const spawn = require('child_process').spawn
 const gazebojs = require('../index')
 const timing = require('./timing.js').fast
@@ -13,7 +12,6 @@ suite('subscribe', function() {
 
     suiteSetup (function(done){
 
-        // console.log('suiteSetup');
         gzserver = spawn('gzserver', ['--verbose']);
         gzserver.on('data', (data) => { console.log('gz: ' + data) })
         // give a second for gzserver to come up
