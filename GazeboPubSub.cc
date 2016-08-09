@@ -148,22 +148,6 @@ vector<string> GazeboPubSub::GetMaterials()
 }
 
 /////////////////////////////////////////////////
-vector<string> GazeboPubSub::GetGazeboPaths()
-{
-
-  vector<string> v;
-
-  std::list<std::string> paths = gazebo::common::SystemPaths::Instance()->GetGazeboPaths();
-  for(std::list<std::string>::iterator it= paths.begin(); it != paths.end(); it++)
-  {
-    string path = *it;
-    v.push_back(path);
-  }
-  return v;
-}
-
-
-/////////////////////////////////////////////////
 GazeboPubSub::GazeboPubSub()
 {
   gazebo::transport::init();

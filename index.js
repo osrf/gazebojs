@@ -142,11 +142,6 @@ Gazebo.prototype.pause = function() {
     this.publish("gazebo.msgs.WorldControl",  "~/world_control", {pause:true});
 }
 
-// Get gazebo paths.
-Gazebo.prototype.gazeboPaths = function(cb) {
-    cb(null, this.sim.GazeboPaths());
-}
-
 
 /// \brief Event callback used for inserting models into the editor
 /// \param[in] type Type of model or model uri.

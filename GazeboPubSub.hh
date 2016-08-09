@@ -69,8 +69,6 @@ namespace gzscript
 
     public: std::vector<std::string> GetMaterials();
 
-    public: std::vector<std::string> GetGazeboPaths();
-
     /// \brief Gazebo transport node.
     protected: gazebo::transport::NodePtr node;
 
