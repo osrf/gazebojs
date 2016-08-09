@@ -24,7 +24,6 @@
 #include "json2pb.h"
 
 #include <gazebo/common/SystemPaths.hh>
-#include <gazebo/msgs/msgs.hh>
 
 #define MAX_NUM_MSG_SIZE 1000
 
