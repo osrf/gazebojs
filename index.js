@@ -192,12 +192,12 @@ Gazebo.prototype.spawn = function(type, name) {
           +   "\n<inertial><mass>1.0</mass></inertial>"
           +   "\n<collision name ='collision'>"
           +     "\n<geometry>"
-          +        '\n' + geom 
+          +        '\n' + geom
           +     "\n</geometry>"
           + "\n</collision>"
           +   "\n<visual name ='visual'>"
           +     "\n<geometry>"
-          +       '\n' + geom 
+          +       '\n' + geom
           +     "\n</geometry>"
           +     "\n<material>"
           +       "\n<script>"
@@ -215,7 +215,7 @@ Gazebo.prototype.spawn = function(type, name) {
     {
         newModelStr = "<sdf version ='" + this.sim.sdfVersion() + "'>"
           + "<model name='" + name + "'>"
-          + "  <pose>" + pos.x + " " + pos.y + " "+ pos.z 
+          + "  <pose>" + pos.x + " " + pos.y + " "+ pos.z
                     + " " + rpy.x + " "   + rpy.y + " " + rpy.z + "</pose>"
           + "  <include>"
           + "    <uri>" + type + "</uri>"
@@ -390,14 +390,14 @@ exports.connect = function (options ) {
 
 exports.topicsList = function(cb) {
     const child = exec('gz topic --l' , (error, stdout, stderr) => {
-            if (error) {
-                cb(null, error)
-            }else if(stderr){
-                cb(stderr);
-            }else{
-                cb(null, stdout.split('/gazebo'));
-            }
-        })
+        if (error) {
+            cb(null, error)
+        }else if(stderr){
+            cb(stderr);
+        }else{
+            cb(null, stdout.split('/gazebo'));
+        }
+    })
 }
 
 // test for publish
