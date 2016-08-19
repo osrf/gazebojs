@@ -57,7 +57,7 @@ suite('filter', function() {
     });
 
 
-   test('time too short, no messages pass through', function(){
+    test('time too short, no messages pass through', function(){
         var filter = new gazebojs.PosesFilter({timeElapsed : 1.0e-6 } );
         // add p0 messages
         var unfiltered0 = filter.addPosesStamped(p0);

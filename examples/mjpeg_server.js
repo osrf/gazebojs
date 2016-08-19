@@ -11,8 +11,8 @@ var gazebojs = require('gazebojs');
 
 if (process.argv.length < 3)
 {
-  console.log( 'node ' + process.argv[1] + ' [port]');
-  process.exit(-1);
+    console.log( 'node ' + process.argv[1] + ' [port]');
+    process.exit(-1);
 }
 
 var port = parseInt(process.argv[2]);
@@ -49,7 +49,7 @@ http.createServer(function(req, res) {
     });
 
     req.on("end", function() {
-      console.log('request ended!');
+        console.log('request ended!');
       // gazebo.unsubscribe(topic);
       // mjpegReqHandler.close();
     });
@@ -60,7 +60,7 @@ http.createServer(function(req, res) {
 
 console.log('setup a loop with 5000 sec interval tick');
 setInterval(function (){
-  console.log('tick ' + gazebo);
+    console.log('tick ' + gazebo);
 },50000000);
 
 
