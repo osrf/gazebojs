@@ -80,6 +80,9 @@ suite('topics', function() {
             gazebo.unsubscribe('~/visual');
             done();
         },{'toJson':false});
+        setTimeout(()=>{
+            gazebo.spawn(sensor_uri, 'hokuyo');
+        },timing.cmd) 
     });
 
 

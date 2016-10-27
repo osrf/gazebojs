@@ -248,7 +248,7 @@ void GZPubSub::SdfVersion(const v8::FunctionCallbackInfo<v8::Value>& args){
   std::string version = obj->gazebo->GetSdfVer();
   Local<Array> result_list = Array::New(args.GetIsolate());
   result_list->Set(0,String::NewFromUtf8(args.GetIsolate(), version.c_str()));
-  args.GetReturnValue().Set(result_list);  
+  args.GetReturnValue().Set(result_list);
 }
 
 /////////////////////////////////////////////////
@@ -328,7 +328,7 @@ void GZPubSub::Subscribe(const FunctionCallbackInfo<Value>& args)
         "Wrong argument type. Latch Boolean expected as third arument."));
       return;
     }
-    latch = *args[3]->ToBoolean();
+    latch = args[3]->BooleanValue();
   }
   // extract msg type, topic and callback from javascript
   String::Utf8Value sarg0(args[0]->ToString());

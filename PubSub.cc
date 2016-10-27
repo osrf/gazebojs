@@ -17,7 +17,6 @@
 #include "PubSub.hh"
 
 #include <algorithm>
-#include "json2pb.h"
 #include <gazebo/common/SystemPaths.hh>
 
 #define MAX_NUM_MSG_SIZE 1000
@@ -114,6 +113,3 @@ void PubSub::Publish(const char*_type, const char *_topic, const char *_msg)
   }
   pub->Publish(_msg);
 }
-
-
-
