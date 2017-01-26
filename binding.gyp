@@ -6,7 +6,7 @@
         "GZPubSub.cc", "GZPubSub.hh",
         "PubSub.cc", "PubSub.hh",
         "GazeboPubSub.cc", "GazeboPubSub.hh",
-        "json2pb.c", "jsonp2b.h",
+        "json2pb.c", "json2pb.h",
         "ConfigLoader.cc", "ConfigLoader.hh",
         "OgreMaterialParser.cc", "OgreMaterialParser.hh"],
       'cflags_cc!': [ '-fno-rtti', '-fno-exceptions' ],
